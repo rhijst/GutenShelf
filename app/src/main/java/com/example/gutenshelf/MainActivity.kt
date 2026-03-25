@@ -6,7 +6,9 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
@@ -15,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
+import androidx.compose.ui.unit.dp
 import com.example.gutenshelf.ui.theme.GutenShelfTheme
 
 // Navigation
@@ -24,8 +27,9 @@ import androidx.navigation.compose.composable
 
 // Pages
 import com.example.gutenshelf.customBooks.CustomBooksScreen
+import com.example.gutenshelf.favorite.FavoriteScreen
 import com.example.gutenshelf.home.HomeScreen
-import com.example.gutenshelf.lists.ListsScreen
+import com.example.gutenshelf.shelfs.ShelfsScreen
 import com.example.gutenshelf.search.SearchScreen
 import com.example.gutenshelf.settings.SettingsScreen
 
@@ -53,8 +57,10 @@ fun GutenShelfApp() {
                 item(
                     icon = {
                         Icon(
-                            painterResource(it.icon),
-                            contentDescription = it.label
+                            painter = painterResource(it.icon),
+                            contentDescription = it.label,
+                            modifier = Modifier.size(24.dp),
+                            tint = MaterialTheme.colorScheme.onSurface
                         )
                     },
                     label = { Text(it.label) },
@@ -77,8 +83,9 @@ fun GutenShelfApp() {
                 modifier = Modifier.padding(innerPadding)
             ) {
                 composable(AppDestinations.HOME.route) { HomeScreen() }
-                composable(AppDestinations.LISTS.route) { ListsScreen() }
-                composable(AppDestinations.CUSTOM_BOOKS.route) { CustomBooksScreen() }
+                composable(AppDestinations.FAVORITE.route) { FavoriteScreen() }
+                composable(AppDestinations.BOOKS.route) { CustomBooksScreen() }
+                composable(AppDestinations.SHELFS.route) { ShelfsScreen() }
                 composable(AppDestinations.SEARCH.route) { SearchScreen() }
                 composable(AppDestinations.SETTINGS.route) { SettingsScreen() }
             }
@@ -91,11 +98,12 @@ enum class AppDestinations(
     val icon: Int,
     val route: String
 ) {
-    HOME("Home", R.drawable.ic_home, "home"),
-    LISTS("Lists", R.drawable.ic_favorite, "lists"),
-    CUSTOM_BOOKS("Custom Books", R.drawable.ic_account_box, "custom_books"),
-    SEARCH("Search", R.drawable.ic_account_box, "search"),
-    SETTINGS("Settings", R.drawable.ic_account_box, "settings"),
+    HOME("Home", R.drawable.home, "home"),
+    FAVORITE("Favorite", R.drawable.heart, "favorite"),
+    SHELFS("Shelf's", R.drawable.books, "Shelfs"),
+    BOOKS("Books", R.drawable.book, "custom_books"),
+    SEARCH("Search", R.drawable.search, "search"),
+    SETTINGS("Settings", R.drawable.gears, "settings"),
 }
 
 @Composable
