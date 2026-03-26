@@ -2,6 +2,7 @@ package com.example.gutenshelf.composables
 
 import android.graphics.Bitmap
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
@@ -21,7 +22,7 @@ import com.example.gutenshelf.models.Book
 import com.example.gutenshelf.network.VolleySingleton
 
 @Composable
-fun BookItem(book: Book) {
+fun BookItem(book: Book, onClick: (Int) -> Unit = {}) {
     val context = LocalContext.current
     var bitmap by remember { mutableStateOf<Bitmap?>(null) }
 
@@ -41,6 +42,7 @@ fun BookItem(book: Book) {
         modifier = Modifier
             .padding(8.dp)
             .width(120.dp)
+            .clickable { onClick(book.id) }
     ) {
         if (bitmap != null) {
             Image(

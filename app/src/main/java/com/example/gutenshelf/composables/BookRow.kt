@@ -12,7 +12,11 @@ import androidx.compose.ui.unit.dp
 import com.example.gutenshelf.models.Book
 
 @Composable
-fun BookRow(title: String? = null, books: List<Book> = emptyList()) {
+fun BookRow(
+    title: String? = null,
+    books: List<Book> = emptyList(),
+    onBookClick: (Int) -> Unit = {}
+) {
     Column {
         if (title != null) {
             Text(
@@ -24,7 +28,7 @@ fun BookRow(title: String? = null, books: List<Book> = emptyList()) {
 
         LazyRow {
             items(books) { book ->
-                BookItem(book)
+                BookItem(book, onClick = onBookClick)
             }
         }
     }

@@ -12,4 +12,5 @@ enum class AppDestinations(
     BOOKS("Books", R.drawable.book, "custom_books"),
     SEARCH("Search", R.drawable.search, "search"),
     SETTINGS("Settings", R.drawable.gears, "settings"),
+    BOOK_DETAIL("Book Detail", R.drawable.book, "book_detail/{bookId}")
 }
