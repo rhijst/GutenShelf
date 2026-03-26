@@ -1,9 +1,9 @@
-package com.example.gutenshelf.home
+package com.example.gutenshelf.pages.settings
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 
 @Composable
-fun HomeScreen() {
-    Text("Home Screen")
+fun SettingsScreen() {
+    Text("Settings Screen")
 }

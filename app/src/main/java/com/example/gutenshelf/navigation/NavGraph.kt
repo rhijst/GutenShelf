@@ -10,12 +10,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 
 // Pages
-import com.example.gutenshelf.customBooks.CustomBooksScreen
-import com.example.gutenshelf.favorite.FavoriteScreen
-import com.example.gutenshelf.home.HomeScreen
-import com.example.gutenshelf.shelfs.ShelfsScreen
-import com.example.gutenshelf.search.SearchScreen
-import com.example.gutenshelf.settings.SettingsScreen
+import com.example.gutenshelf.pages.customBooks.CustomBooksScreen
+import com.example.gutenshelf.pages.favorite.FavoriteScreen
+import com.example.gutenshelf.pages.home.HomeScreen
+import com.example.gutenshelf.pages.shelfs.ShelfsScreen
+import com.example.gutenshelf.pages.search.SearchScreen
+import com.example.gutenshelf.pages.settings.SettingsScreen
 
 @Composable
 fun AppNavGraph(navController: NavHostController) {

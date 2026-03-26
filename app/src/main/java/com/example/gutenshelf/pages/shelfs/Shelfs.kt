@@ -1,10 +1,9 @@
-package com.example.gutenshelf.search
+package com.example.gutenshelf.pages.shelfs
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 
-
 @Composable
-fun SearchScreen() {
-    Text("Search Screen")
+fun ShelfsScreen() {
+    Text("Lists Screen")
 }
