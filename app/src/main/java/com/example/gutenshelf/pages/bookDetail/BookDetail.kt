@@ -2,6 +2,7 @@ package com.example.gutenshelf.pages.bookDetail
 
 import android.graphics.Bitmap
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -25,7 +26,7 @@ import com.example.gutenshelf.network.VolleySingleton
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BookDetailScreen(bookId: Int, onBackClick: () -> Unit) {
+fun BookDetailScreen(bookId: Int, onBackClick: () -> Unit, onAuthorClick: (String) -> Unit) {
     val context = LocalContext.current
     val repository = remember { BookRepository(context) }
     var book by remember { mutableStateOf<Book?>(null) }
@@ -121,7 +122,8 @@ fun BookDetailScreen(bookId: Int, onBackClick: () -> Unit) {
                             Text(
                                 text = currentBook.authors.joinToString { it.name },
                                 style = MaterialTheme.typography.bodyLarge,
-                                color = MaterialTheme.colorScheme.secondary
+                                color = MaterialTheme.colorScheme.secondary,
+                                modifier = Modifier.clickable { onAuthorClick(book!!.authors[0].toString()) }
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(

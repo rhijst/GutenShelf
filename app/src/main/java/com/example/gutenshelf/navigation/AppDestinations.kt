@@ -1,16 +1,29 @@
 package com.example.gutenshelf.navigation
 import com.example.gutenshelf.R
 
-enum class AppDestinations(
-    val label: String,
-    val icon: Int,
-    val route: String
-) {
-    HOME("Home", R.drawable.home, "home"),
-    FAVORITE("Favorite", R.drawable.heart, "favorite"),
-    SHELFS("Shelf's", R.drawable.books, "shelfs"),
-    BOOKS("Books", R.drawable.book, "custom_books"),
-    SEARCH("Search", R.drawable.search, "search"),
-    SETTINGS("Settings", R.drawable.gears, "settings"),
-    BOOK_DETAIL("Book Detail", R.drawable.book, "book_detail/{bookId}")
+enum class AppDestinations(val route: String, ) {
+    HOME("home"),
+    FAVORITE("favorite"),
+    SHELFS("shelfs"),
+    BOOKS("custom_books"),
+    SEARCH("search"),
+    SETTINGS("settings" ),
+    BOOK_DETAIL("book_detail/{bookId}"),
+    AUTHOR_BOOKS("author_books/{authorName}")
 }
+
+data class NavBarDestination(
+    val route: String,
+    val icon: Int,
+    val label: String
+)
+
+// Only the screens that appear in the nav bar
+val NavBarDestinations = listOf(
+    NavBarDestination(AppDestinations.HOME.route, R.drawable.home, "Home"),
+    NavBarDestination(AppDestinations.FAVORITE.route, R.drawable.heart, "Favorite"),
+    NavBarDestination(AppDestinations.SHELFS.route, R.drawable.books, "Shelf's"),
+    NavBarDestination(AppDestinations.BOOKS.route, R.drawable.book, "Books"),
+    NavBarDestination(AppDestinations.SEARCH.route, R.drawable.search, "Search"),
+    NavBarDestination(AppDestinations.SETTINGS.route, R.drawable.gears, "Settings")
+)

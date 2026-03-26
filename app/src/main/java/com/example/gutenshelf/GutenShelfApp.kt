@@ -4,8 +4,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.rememberNavController
-import com.example.gutenshelf.navigation.AppDestinations
-
+import com.example.gutenshelf.navigation.NavBarDestinations
 
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
@@ -29,21 +28,23 @@ fun GutenShelfApp() {
 
     NavigationSuiteScaffold(
         navigationSuiteItems = {
-            AppDestinations.entries.forEach {
+            NavBarDestinations.forEach { navItem ->
                 item(
                     icon = {
                         Icon(
-                            painter = painterResource(it.icon),
-                            contentDescription = it.label,
+                            painter = painterResource(navItem.icon),
+                            contentDescription = navItem.label,
                             modifier = Modifier.size(24.dp),
                             tint = MaterialTheme.colorScheme.onSurface
                         )
                     },
-                    label = { Text(it.label) },
-                    selected = currentRoute == it.route,
+                    label = { Text(navItem.label) },
+                    selected = currentRoute == navItem.route,
                     onClick = {
-                        navController.navigate(it.route) {
-                            popUpTo(navController.graph.startDestinationId)
+                        navController.navigate(navItem.route) {
+                            popUpTo(navController.graph.startDestinationId) {
+                                inclusive = false
+                            }
                             launchSingleTop = true
                         }
                     }

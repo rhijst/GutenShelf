@@ -10,6 +10,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.example.gutenshelf.pages.authorPage.AuthorBooksScreen
 
 // Pages
 import com.example.gutenshelf.pages.customBooks.CustomBooksScreen
@@ -38,7 +39,7 @@ fun AppNavGraph(navController: NavHostController) {
             composable(AppDestinations.SHELFS.route) { ShelfsScreen() }
             composable(AppDestinations.SEARCH.route) { SearchScreen() }
             composable(AppDestinations.SETTINGS.route) { SettingsScreen() }
-            
+
             composable(
                 route = AppDestinations.BOOK_DETAIL.route,
                 arguments = listOf(navArgument("bookId") { type = NavType.IntType })
@@ -46,6 +47,20 @@ fun AppNavGraph(navController: NavHostController) {
                 val bookId = backStackEntry.arguments?.getInt("bookId") ?: 0
                 BookDetailScreen(
                     bookId = bookId,
+                    onBackClick = { navController.popBackStack() },
+                    onAuthorClick = { authorName ->
+                        navController.navigate("author_books/$authorName")
+                    }
+                )
+            }
+
+            composable(
+                route = AppDestinations.AUTHOR_BOOKS.route ,
+                arguments = listOf(navArgument("authorName") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val authorName = backStackEntry.arguments?.getString("authorName") ?: ""
+                AuthorBooksScreen(
+                    authorName = authorName,
                     onBackClick = { navController.popBackStack() }
                 )
             }
