@@ -2,6 +2,7 @@ package com.example.gutenshelf.pages.authorPage
 
 import android.graphics.Bitmap
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -117,6 +118,7 @@ fun AuthorBooksScreen(authorName: String) {
 
 @Composable
 fun AuthorBookItem(book: Book) {
+    val navigator = LocalNavigator.current
     val context = LocalContext.current
     var bitmap by remember { mutableStateOf<Bitmap?>(null) }
 
@@ -132,7 +134,12 @@ fun AuthorBookItem(book: Book) {
         }
     }
 
-    Column {
+    Column(
+            modifier = Modifier
+                .padding(8.dp)
+                .width(120.dp)
+                .clickable { (navigator::goToBookDetail)(book.id) }
+            )  {
         if (bitmap != null) {
             Image(
                 bitmap = bitmap!!.asImageBitmap(),

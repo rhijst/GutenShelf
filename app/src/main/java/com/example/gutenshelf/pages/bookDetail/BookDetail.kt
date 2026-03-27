@@ -121,13 +121,26 @@ fun BookDetailScreen(bookId: Int) {
                                 style = MaterialTheme.typography.headlineSmall,
                                 fontWeight = FontWeight.Bold
                             )
-                            Text(
-                                text = currentBook.authors.joinToString { it.name },
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = MaterialTheme.colorScheme.secondary,
-                                modifier = Modifier.clickable { navigator.goToAuthorBooks(book!!.authors[0].name) }
-                            )
+
+                            Spacer(modifier = Modifier.height(4.dp))
+
+                            // List of clickable authors
+                            Column {
+                                currentBook.authors.forEachIndexed { index, author ->
+                                    Text(
+                                        text = author.name,
+                                        style = MaterialTheme.typography.bodyLarge.copy(
+                                            color = MaterialTheme.colorScheme.secondary
+                                        ),
+                                        modifier = Modifier.clickable {
+                                            navigator.goToAuthorBooks(author.name)
+                                        }
+                                    )
+                                }
+                            }
+
                             Spacer(modifier = Modifier.height(8.dp))
+
                             Text(
                                 text = "Downloads: ${currentBook.download_count}",
                                 style = MaterialTheme.typography.bodyMedium

@@ -103,7 +103,7 @@ class BookRepository(private val context: Context) {
         val url = "https://gutendex.com/books?search=${authorName.replace(" ", "%20")}"
 
         val request = object : JsonObjectRequest(
-            Request.Method.GET, baseUrl, null,
+            Request.Method.GET, url, null,
             { response ->
                 // Perform heavy parsing on a background thread
                 executor.execute {
