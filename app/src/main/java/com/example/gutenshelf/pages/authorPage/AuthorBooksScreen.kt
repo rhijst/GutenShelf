@@ -8,8 +8,13 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -18,16 +23,20 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.android.volley.toolbox.ImageRequest
 import com.example.gutenshelf.models.Book
 import com.example.gutenshelf.network.BookRepository
 import com.example.gutenshelf.network.VolleySingleton
 import com.example.gutenshelf.R
+import com.example.gutenshelf.navigation.LocalNavigator
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AuthorBooksScreen(authorName: String) {
     val context = LocalContext.current
+    val navigator = LocalNavigator.current
     val repository = remember { BookRepository(context) }
 
     var books by remember { mutableStateOf<List<Book>>(emptyList()) }
@@ -47,24 +56,60 @@ fun AuthorBooksScreen(authorName: String) {
         )
     }
 
-    if (isLoading) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = authorName,
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = { navigator.goBack() }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.back),
+                            contentDescription = "Back",
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                }
+            )
         }
-    } else if (errorMessage != null) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            Text(text = "Error: $errorMessage", modifier = Modifier.align(Alignment.Center))
-        }
-    } else {
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(3),
-            contentPadding = PaddingValues(8.dp),
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) { paddingValues ->
+
+        Box(modifier = Modifier
+            .padding(paddingValues)
+            .fillMaxSize()
         ) {
-            items(books) { book ->
-                AuthorBookItem(book)
+            when {
+                isLoading -> {
+                    CircularProgressIndicator(
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
+
+                errorMessage != null -> {
+                    Text(
+                        text = "Error: $errorMessage",
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
+
+                else -> {
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(3),
+                        contentPadding = PaddingValues(8.dp),
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        items(books) { book ->
+                            AuthorBookItem(book)
+                        }
+                    }
+                }
             }
         }
     }
@@ -87,10 +132,7 @@ fun AuthorBookItem(book: Book) {
         }
     }
 
-    Column(
-        modifier = Modifier
-            .width(100.dp)
-    ) {
+    Column {
         if (bitmap != null) {
             Image(
                 bitmap = bitmap!!.asImageBitmap(),

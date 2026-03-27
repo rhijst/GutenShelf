@@ -42,7 +42,7 @@ fun BookDetailScreen(bookId: Int) {
             onSuccess = { fetchedBook ->
                 book = fetchedBook
                 isLoading = false
-                
+
                 // Fetch cover image if available
                 fetchedBook.coverUrl?.let { url ->
                     val imageRequest = ImageRequest(
