@@ -2,4 +2,10 @@
 <resources>
 
     <style name="Theme.GutenShelf" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_bookshelf_foreground</item>
+        <item name="windowSplashScreenBackground">@color/ic_launcher_background</item>
+        <item name="postSplashScreenTheme">@style/Theme.GutenShelf</item>
+    </style>
 </resources>
