@@ -15,7 +15,6 @@ import com.example.gutenshelf.models.Book
 fun BookRow(
     title: String? = null,
     books: List<Book> = emptyList(),
-    onBookClick: (Int) -> Unit = {}
 ) {
     Column {
         if (title != null) {
@@ -28,7 +27,7 @@ fun BookRow(
 
         LazyRow {
             items(books) { book ->
-                BookItem(book, onClick = onBookClick)
+                BookItem(book)
             }
         }
     }

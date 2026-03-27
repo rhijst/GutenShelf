@@ -15,7 +15,7 @@ import com.example.gutenshelf.models.Book
 import com.example.gutenshelf.network.BookRepository
 
 @Composable
-fun HomeScreen(onBookClick: (Int) -> Unit) {
+fun HomeScreen() {
     val context = LocalContext.current
     val repository = remember { BookRepository(context) }
     var books by remember { mutableStateOf<List<Book>>(emptyList()) }
@@ -47,15 +47,15 @@ fun HomeScreen(onBookClick: (Int) -> Unit) {
                 }
 
                 item {
-                    BookRow(title = "Popular", books = books, onBookClick = onBookClick)
+                    BookRow(title = "Popular", books = books)
                 }
 
                 item {
-                    BookRow(title = "Recommended", books = books.reversed(), onBookClick = onBookClick)
+                    BookRow(title = "Recommended", books = books.reversed())
                 }
 
                 item {
-                    BookRow(title = "New Releases", books = books.shuffled(), onBookClick = onBookClick)
+                    BookRow(title = "New Releases", books = books.shuffled())
                 }
             }
         }

@@ -22,18 +22,16 @@ import com.example.gutenshelf.pages.settings.SettingsScreen
 import com.example.gutenshelf.pages.bookDetail.BookDetailScreen
 
 @Composable
-fun AppNavGraph(navController: NavHostController) {
+fun AppNavGraph(
+        navController: NavHostController
+    ){
     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
         NavHost(
             navController = navController,
             startDestination = AppDestinations.HOME.route,
             modifier = Modifier.padding(innerPadding)
         ) {
-            composable(AppDestinations.HOME.route) {
-                HomeScreen(onBookClick = { bookId ->
-                    navController.navigate("book_detail/$bookId")
-                })
-            }
+            composable(AppDestinations.HOME.route) { HomeScreen() }
             composable(AppDestinations.FAVORITE.route) { FavoriteScreen() }
             composable(AppDestinations.BOOKS.route) { CustomBooksScreen() }
             composable(AppDestinations.SHELFS.route) { ShelfsScreen() }
@@ -45,13 +43,7 @@ fun AppNavGraph(navController: NavHostController) {
                 arguments = listOf(navArgument("bookId") { type = NavType.IntType })
             ) { backStackEntry ->
                 val bookId = backStackEntry.arguments?.getInt("bookId") ?: 0
-                BookDetailScreen(
-                    bookId = bookId,
-                    onBackClick = { navController.popBackStack() },
-                    onAuthorClick = { authorName ->
-                        navController.navigate("author_books/$authorName")
-                    }
-                )
+                BookDetailScreen(bookId)
             }
 
             composable(
@@ -59,10 +51,7 @@ fun AppNavGraph(navController: NavHostController) {
                 arguments = listOf(navArgument("authorName") { type = NavType.StringType })
             ) { backStackEntry ->
                 val authorName = backStackEntry.arguments?.getString("authorName") ?: ""
-                AuthorBooksScreen(
-                    authorName = authorName,
-                    onBackClick = { navController.popBackStack() }
-                )
+                AuthorBooksScreen(authorName = authorName)
             }
         }
     }

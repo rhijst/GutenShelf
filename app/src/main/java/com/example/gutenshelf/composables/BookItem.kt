@@ -19,11 +19,14 @@ import androidx.compose.ui.unit.dp
 import com.android.volley.toolbox.ImageRequest
 import com.example.gutenshelf.R
 import com.example.gutenshelf.models.Book
+import com.example.gutenshelf.navigation.LocalNavigator
 import com.example.gutenshelf.network.VolleySingleton
 
 @Composable
-fun BookItem(book: Book, onClick: (Int) -> Unit = {}) {
+fun BookItem(book: Book) {
     val context = LocalContext.current
+    val navigator = LocalNavigator.current
+
     var bitmap by remember { mutableStateOf<Bitmap?>(null) }
 
     LaunchedEffect(book.coverUrl) {
@@ -42,7 +45,7 @@ fun BookItem(book: Book, onClick: (Int) -> Unit = {}) {
         modifier = Modifier
             .padding(8.dp)
             .width(120.dp)
-            .clickable { onClick(book.id) }
+            .clickable { (navigator::goToBookDetail)(book.id) }
     ) {
         if (bitmap != null) {
             Image(

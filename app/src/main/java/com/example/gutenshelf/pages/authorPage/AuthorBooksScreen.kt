@@ -1,7 +1,5 @@
 package com.example.gutenshelf.pages.authorPage
 
-//package com.example.gutenshelf.pages.author
-
 import android.graphics.Bitmap
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -28,7 +26,7 @@ import com.example.gutenshelf.network.VolleySingleton
 import com.example.gutenshelf.R
 
 @Composable
-fun AuthorBooksScreen(authorName: String, onBackClick: () -> Boolean) {
+fun AuthorBooksScreen(authorName: String) {
     val context = LocalContext.current
     val repository = remember { BookRepository(context) }
 
@@ -91,7 +89,7 @@ fun AuthorBookItem(book: Book) {
 
     Column(
         modifier = Modifier
-            .width(100.dp) // adjust width as needed
+            .width(100.dp)
     ) {
         if (bitmap != null) {
             Image(

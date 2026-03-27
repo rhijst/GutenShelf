@@ -9,15 +9,20 @@ import com.example.gutenshelf.navigation.NavBarDestinations
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.gutenshelf.navigation.AppNavGraph
+import com.example.gutenshelf.navigation.LocalNavigator
+import com.example.gutenshelf.navigation.NavigatorImpl
 
 @Composable
 fun GutenShelfApp() {
     val navController = rememberNavController()
+    val navigator = remember { NavigatorImpl(navController) }
 
     val currentRoute = navController
         .currentBackStackEntryFlow
@@ -41,17 +46,14 @@ fun GutenShelfApp() {
                     label = { Text(navItem.label) },
                     selected = currentRoute == navItem.route,
                     onClick = {
-                        navController.navigate(navItem.route) {
-                            popUpTo(navController.graph.startDestinationId) {
-                                inclusive = false
-                            }
-                            launchSingleTop = true
-                        }
+                        navigator.navigateTo(navItem.route)
                     }
                 )
             }
         }
     ) {
-        AppNavGraph(navController)
+        CompositionLocalProvider(LocalNavigator provides navigator) {
+            AppNavGraph(navController)
+        }
     }
 }

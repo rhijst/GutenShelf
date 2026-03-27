@@ -21,13 +21,15 @@ import androidx.compose.ui.unit.dp
 import com.android.volley.toolbox.ImageRequest
 import com.example.gutenshelf.R
 import com.example.gutenshelf.models.Book
+import com.example.gutenshelf.navigation.LocalNavigator
 import com.example.gutenshelf.network.BookRepository
 import com.example.gutenshelf.network.VolleySingleton
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BookDetailScreen(bookId: Int, onBackClick: () -> Unit, onAuthorClick: (String) -> Unit) {
+fun BookDetailScreen(bookId: Int) {
     val context = LocalContext.current
+    val navigator = LocalNavigator.current
     val repository = remember { BookRepository(context) }
     var book by remember { mutableStateOf<Book?>(null) }
     var isLoading by remember { mutableStateOf(true) }
@@ -64,7 +66,7 @@ fun BookDetailScreen(bookId: Int, onBackClick: () -> Unit, onAuthorClick: (Strin
             TopAppBar(
                 title = { Text("Book Details") },
                 navigationIcon = {
-                    IconButton(onClick = onBackClick) {
+                    IconButton(onClick = navigator::goBack) {
                         Icon(
                             painter = painterResource(id = R.drawable.back),
                             contentDescription = "Back",
@@ -123,7 +125,7 @@ fun BookDetailScreen(bookId: Int, onBackClick: () -> Unit, onAuthorClick: (Strin
                                 text = currentBook.authors.joinToString { it.name },
                                 style = MaterialTheme.typography.bodyLarge,
                                 color = MaterialTheme.colorScheme.secondary,
-                                modifier = Modifier.clickable { onAuthorClick(book!!.authors[0].toString()) }
+                                modifier = Modifier.clickable { navigator.goToAuthorBooks(book!!.authors[0].name) }
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
