@@ -37,7 +37,7 @@ fun AuthorBooksScreen(authorName: String) {
     var errorMessage by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(authorName) {
-        repository.fetchBooksByAuthor(authorName,
+        repository.fetchBooksBy(authorName,
             onSuccess = { fetchedBooks ->
                 books = fetchedBooks
                 isLoading = false

@@ -99,8 +99,8 @@ class BookRepository(private val context: Context) {
         VolleySingleton.getInstance(context).addToRequestQueue(request)
     }
 
-    fun fetchBooksByAuthor(authorName: String, onSuccess: (List<Book>) -> Unit, onError: (String) -> Unit) {
-        val url = "https://gutendex.com/books?search=${authorName.replace(" ", "%20")}"
+    fun fetchBooksBy(searchQuery: String, onSuccess: (List<Book>) -> Unit, onError: (String) -> Unit) {
+        val url = "https://gutendex.com/books?search=${searchQuery.replace(" ", "%20")}"
 
         val request = object : JsonObjectRequest(
             Request.Method.GET, url, null,
