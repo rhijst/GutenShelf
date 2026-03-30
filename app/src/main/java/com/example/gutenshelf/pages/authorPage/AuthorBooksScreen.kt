@@ -1,13 +1,9 @@
 package com.example.gutenshelf.pages.authorPage
 
-import android.graphics.Bitmap
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -19,18 +15,14 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.android.volley.toolbox.ImageRequest
 import com.example.gutenshelf.models.Book
 import com.example.gutenshelf.network.BookRepository
-import com.example.gutenshelf.network.VolleySingleton
 import com.example.gutenshelf.R
+import com.example.gutenshelf.composables.BookItem
 import com.example.gutenshelf.navigation.LocalNavigator
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -107,66 +99,11 @@ fun AuthorBooksScreen(authorName: String) {
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         items(books) { book ->
-                            AuthorBookItem(book)
+                            BookItem(book)
                         }
                     }
                 }
             }
         }
-    }
-}
-
-@Composable
-fun AuthorBookItem(book: Book) {
-    val navigator = LocalNavigator.current
-    val context = LocalContext.current
-    var bitmap by remember { mutableStateOf<Bitmap?>(null) }
-
-    LaunchedEffect(book.coverUrl) {
-        book.coverUrl?.let { url ->
-            val imageRequest = ImageRequest(
-                url,
-                { response -> bitmap = response },
-                0, 0, null, Bitmap.Config.RGB_565,
-                { /* Handle error */ }
-            )
-            VolleySingleton.getInstance(context).addToRequestQueue(imageRequest)
-        }
-    }
-
-    Column(
-            modifier = Modifier
-                .padding(8.dp)
-                .width(120.dp)
-                .clickable { (navigator::goToBookDetail)(book.id) }
-            )  {
-        if (bitmap != null) {
-            Image(
-                bitmap = bitmap!!.asImageBitmap(),
-                contentDescription = book.title,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .height(150.dp)
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(8.dp))
-            )
-        } else {
-            Image(
-                painter = painterResource(R.drawable.cover),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .height(150.dp)
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(8.dp))
-            )
-        }
-
-        Text(
-            text = book.title,
-            maxLines = 2,
-            style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.padding(top = 4.dp)
-        )
     }
 }

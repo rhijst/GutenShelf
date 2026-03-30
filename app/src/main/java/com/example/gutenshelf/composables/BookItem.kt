@@ -20,7 +20,7 @@ import com.android.volley.toolbox.ImageRequest
 import com.example.gutenshelf.R
 import com.example.gutenshelf.models.Book
 import com.example.gutenshelf.navigation.LocalNavigator
-import com.example.gutenshelf.network.ImageCache
+import com.example.gutenshelf.cache.ImageCache
 import com.example.gutenshelf.network.VolleySingleton
 
 @Composable
@@ -55,7 +55,7 @@ fun BookItem(book: Book) {
                 { /* error */ }
             )
 
-            // Qeue image request
+            // Queue image request
             VolleySingleton.getInstance(context).addToRequestQueue(imageRequest)
         }
 
@@ -65,20 +65,20 @@ fun BookItem(book: Book) {
                 .width(120.dp)
                 .clickable { (navigator::goToBookDetail)(book.id) }
         ) {
-            if (bitmap != null) {
-                Image( // Show image
-                    bitmap = bitmap!!.asImageBitmap(),
-                    contentDescription = book.title,
+            if (bitmap == null) {
+                Image( // Placeholder
+                    painter = painterResource(R.drawable.cover),
+                    contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .height(180.dp)
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(8.dp))
                 )
-            } else { // Place holder
-                Image(
-                    painter = painterResource(R.drawable.cover),
-                    contentDescription = null,
+            } else {
+                Image( // Show image
+                    bitmap = bitmap!!.asImageBitmap(),
+                    contentDescription = book.title,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .height(180.dp)

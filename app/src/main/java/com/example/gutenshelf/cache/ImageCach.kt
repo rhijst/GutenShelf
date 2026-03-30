@@ -1,4 +1,4 @@
-package com.example.gutenshelf.network
+package com.example.gutenshelf.cache
 
 import android.graphics.Bitmap
 
