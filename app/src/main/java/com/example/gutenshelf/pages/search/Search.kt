@@ -2,9 +2,6 @@ package com.example.gutenshelf.pages.search
 
 import android.app.Application
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
@@ -18,7 +15,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.gutenshelf.R
-import com.example.gutenshelf.composables.BookItem
+import com.example.gutenshelf.composables.BookGrid
 
 @Composable
 fun SearchScreen() {
@@ -104,15 +101,7 @@ fun SearchScreen() {
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             } else {
-                LazyVerticalGrid(
-                    columns = GridCells.Adaptive(minSize = 120.dp),
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(bottom = 16.dp)
-                ) {
-                    items(books, key = { it.id }) { book ->
-                        BookItem(book)
-                    }
-                }
+                BookGrid(books = books)
             }
         }
     }

@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import com.example.gutenshelf.models.Book
 import com.example.gutenshelf.network.BookRepository
 import com.example.gutenshelf.R
+import com.example.gutenshelf.composables.BookGrid
 import com.example.gutenshelf.composables.BookItem
 import com.example.gutenshelf.navigation.LocalNavigator
 
@@ -91,17 +92,7 @@ fun AuthorBooksScreen(authorName: String) {
                 }
 
                 else -> {
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(3),
-                        contentPadding = PaddingValues(8.dp),
-                        modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        items(books) { book ->
-                            BookItem(book)
-                        }
-                    }
+                    BookGrid(books = books)
                 }
             }
         }
