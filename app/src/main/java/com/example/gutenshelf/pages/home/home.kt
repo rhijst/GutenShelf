@@ -41,6 +41,9 @@ fun HomeScreen() {
         } else if (errorMessage != null) {
             Text(text = "Error: $errorMessage", modifier = Modifier.align(Alignment.Center))
         } else {
+            val recommended = remember(books) { books.reversed() }
+            val newReleases = remember(books) { books.shuffled() }
+
             LazyColumn {
                 item {
                     HeaderSection("Featured books & shelf's")
@@ -51,11 +54,11 @@ fun HomeScreen() {
                 }
 
                 item {
-                    BookRow(title = "Recommended", books = books.reversed())
+                    BookRow(title = "Recommended", recommended)
                 }
 
                 item {
-                    BookRow(title = "New Releases", books = books.shuffled())
+                    BookRow(title = "New Releases",newReleases)
                 }
             }
         }

@@ -20,62 +20,81 @@ import com.android.volley.toolbox.ImageRequest
 import com.example.gutenshelf.R
 import com.example.gutenshelf.models.Book
 import com.example.gutenshelf.navigation.LocalNavigator
+import com.example.gutenshelf.network.ImageCache
 import com.example.gutenshelf.network.VolleySingleton
 
 @Composable
 fun BookItem(book: Book) {
-    val context = LocalContext.current
-    val navigator = LocalNavigator.current
+    key(book.id) {
+        val context = LocalContext.current
+        val navigator = LocalNavigator.current
 
-    var bitmap by remember { mutableStateOf<Bitmap?>(null) }
+        // Only relookup if URL changes
+        val cached = remember(book.coverUrl) {
+            book.coverUrl?.let { ImageCache.get(it) }
+        }
 
-    LaunchedEffect(book.coverUrl) {
-        book.coverUrl?.let { url ->
+        // Image
+        var bitmap by remember { mutableStateOf(cached) }
+
+        LaunchedEffect(book.coverUrl) {
+            // URL calidation
+            val url = book.coverUrl ?: return@LaunchedEffect
+
+            // If already chached skip
+            if (ImageCache.get(url) != null) return@LaunchedEffect
+
+            // Create request for image
             val imageRequest = ImageRequest(
                 url,
-                { response -> bitmap = response },
+                { response ->
+                    ImageCache.put(url, response) // Cach the image
+                    bitmap = response
+                },
                 0, 0, null, Bitmap.Config.RGB_565,
-                { /* Handle error */ }
+                { /* error */ }
             )
+
+            // Qeue image request
             VolleySingleton.getInstance(context).addToRequestQueue(imageRequest)
         }
-    }
 
-    Column(
-        modifier = Modifier
-            .padding(8.dp)
-            .width(120.dp)
-            .clickable { (navigator::goToBookDetail)(book.id) }
-    ) {
-        if (bitmap != null) {
-            Image(
-                bitmap = bitmap!!.asImageBitmap(),
-                contentDescription = book.title,
-                contentScale = ContentScale.Crop,
+        Column(
+            modifier = Modifier
+                .padding(8.dp)
+                .width(120.dp)
+                .clickable { (navigator::goToBookDetail)(book.id) }
+        ) {
+            if (bitmap != null) {
+                Image( // Show image
+                    bitmap = bitmap!!.asImageBitmap(),
+                    contentDescription = book.title,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .height(180.dp)
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(8.dp))
+                )
+            } else { // Place holder
+                Image(
+                    painter = painterResource(R.drawable.cover),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .height(180.dp)
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(8.dp))
+                )
+            }
+
+            Text(
+                text = book.title,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
                 modifier = Modifier
-                    .height(180.dp)
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(8.dp))
-            )
-        } else {
-            Image(
-                painter = painterResource(R.drawable.cover),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .height(180.dp)
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(8.dp))
+                    .padding(top = 4.dp)
+                    .align(Alignment.CenterHorizontally)
             )
         }
-
-        Text(
-            text = book.title,
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier
-                .padding(top = 4.dp)
-                .align(Alignment.CenterHorizontally)
-        )
     }
 }

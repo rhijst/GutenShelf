@@ -26,7 +26,7 @@ fun BookRow(
         }
 
         LazyRow {
-            items(books) { book ->
+            items(books, key = { it.id }) { book ->
                 BookItem(book)
             }
         }
