@@ -1,10 +1,13 @@
 package com.example.gutenshelf.models
 
+import android.graphics.Bitmap
+
 data class Book(
     val id: Int,
     val title: String,
     val authors: List<Author>,
-    val formats: Map<String, String>,
+    val formats: Map<String, String> = emptyMap(), // remote URLs
+    var localCover: Bitmap? = null, // for custom books
     val summaries: List<String> = emptyList(),
     val subjects: List<String> = emptyList(),
     val languages: List<String> = emptyList(),

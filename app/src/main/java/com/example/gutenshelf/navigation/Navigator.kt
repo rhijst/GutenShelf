@@ -5,9 +5,12 @@ import android.net.Uri
 
 interface Navigator {
     fun goToBookDetail(bookId: Int)
+
+    fun goToCustomBookDetail(bookId: Int)
+
     fun goToAuthorBooks(authorName: String)
     fun goBack()
-    fun navigateTo(route: String)
+    fun navigate(route: String)
 }
 
 class NavigatorImpl(
@@ -16,6 +19,10 @@ class NavigatorImpl(
 
     override fun goToBookDetail(bookId: Int) {
         navController.navigate("book_detail/$bookId")
+    }
+
+    override fun goToCustomBookDetail(bookId: Int) {
+        navController.navigate("custom_book_detail/$bookId")
     }
 
     override fun goToAuthorBooks(authorName: String) {
@@ -27,7 +34,7 @@ class NavigatorImpl(
         navController.popBackStack()
     }
 
-    override fun navigateTo(route: String) {
+    override fun navigate(route: String) {
         navController.navigate(route) {
             popUpTo(navController.graph.startDestinationId) {
                 inclusive = false

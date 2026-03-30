@@ -46,7 +46,7 @@ fun GutenShelfApp() {
                     label = { Text(navItem.label) },
                     selected = currentRoute == navItem.route,
                     onClick = {
-                        navigator.navigateTo(navItem.route)
+                        navigator.navigate(navItem.route)
                     }
                 )
             }

@@ -20,6 +20,8 @@ import com.example.gutenshelf.pages.shelfs.ShelfsScreen
 import com.example.gutenshelf.pages.search.SearchScreen
 import com.example.gutenshelf.pages.settings.SettingsScreen
 import com.example.gutenshelf.pages.bookDetail.BookDetailScreen
+import com.example.gutenshelf.pages.customBooks.AddCustomBookScreen
+import com.example.gutenshelf.pages.customBooks.CustomBookDetailScreen
 
 @Composable
 fun AppNavGraph(
@@ -33,7 +35,8 @@ fun AppNavGraph(
         ) {
             composable(AppDestinations.HOME.route) { HomeScreen() }
             composable(AppDestinations.FAVORITE.route) { FavoriteScreen() }
-            composable(AppDestinations.BOOKS.route) { CustomBooksScreen() }
+            composable(AppDestinations.CUSTOM_BOOKS.route) { CustomBooksScreen() }
+            composable(AppDestinations.ADD_CUSTOM_BOOK.route) { AddCustomBookScreen() }
             composable(AppDestinations.SHELFS.route) { ShelfsScreen() }
             composable(AppDestinations.SEARCH.route) { SearchScreen() }
             composable(AppDestinations.SETTINGS.route) { SettingsScreen() }
@@ -52,6 +55,14 @@ fun AppNavGraph(
             ) { backStackEntry ->
                 val authorName = backStackEntry.arguments?.getString("authorName") ?: ""
                 AuthorBooksScreen(authorName = authorName)
+            }
+
+            composable(
+                route = "custom_book_detail/{bookId}",
+                arguments = listOf(navArgument("bookId") { type = NavType.IntType })
+            ) { backStackEntry ->
+                val bookId = backStackEntry.arguments?.getInt("bookId") ?: 0
+                CustomBookDetailScreen(bookId)
             }
         }
     }
