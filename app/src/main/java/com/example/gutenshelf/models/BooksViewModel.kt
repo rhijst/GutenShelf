@@ -1,12 +1,20 @@
 package com.example.gutenshelf.models
 
 import android.content.Context
+import android.graphics.Bitmap
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.android.volley.toolbox.ImageRequest
 import com.example.gutenshelf.cache.BookDiskCache
+import com.example.gutenshelf.cache.ImageCache
 import com.example.gutenshelf.network.BookRepository
+import com.example.gutenshelf.network.VolleySingleton
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class BooksViewModel(
     private val context: Context,
@@ -27,16 +35,21 @@ class BooksViewModel(
     }
 
     private fun loadBooks() {
-        // Load cached books
-        val cachedBooks = BookDiskCache.load(context)
+        // Load cached books from disk on background thread
+        viewModelScope.launch(Dispatchers.IO) {
+            val cachedBooks = BookDiskCache.load(context)
 
-        if (cachedBooks.isNotEmpty()) {
-            books = cachedBooks
-            isLoading = false // show immediately in the UI
+            // Update variables on the main thread
+            withContext(Dispatchers.Main) {
+                if (cachedBooks.isNotEmpty()) {
+                    books = cachedBooks
+                    isLoading = false
+                }
+            }
+
+            // Fetch new data (network call can stay as-is, Volley handles it on background)
+            fetchFromApi()
         }
-
-        // fetch new data from UI
-        fetchFromApi()
     }
 
     private fun fetchFromApi() {
@@ -47,8 +60,6 @@ class BooksViewModel(
             onSuccess = { freshBooks ->
                 books = freshBooks
                 isLoading = false
-
-                // Refresh data on disk
                 BookDiskCache.save(context, freshBooks)
             },
             onError = { error ->

@@ -1,6 +1,8 @@
 package com.example.gutenshelf.network
 
+import android.content.ContentValues.TAG
 import android.content.Context
+import android.util.Log
 import com.android.volley.Request
 import com.android.volley.RequestQueue
 import com.android.volley.toolbox.Volley
@@ -22,6 +24,13 @@ class VolleySingleton private constructor(context: Context) {
     }
 
     fun <T> addToRequestQueue(req: Request<T>) {
+        val url = try {
+            req.url
+        } catch (e: Exception) {
+            "Unknown URL"
+        }
+        Log.d("VolleySingleton", "Added request to queue: $url")
+
         requestQueue.add(req)
     }
 }
