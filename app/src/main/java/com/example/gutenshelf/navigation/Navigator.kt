@@ -5,9 +5,8 @@ import android.net.Uri
 
 interface Navigator {
     fun goToBookDetail(bookId: Int)
-
     fun goToCustomBookDetail(bookId: Int)
-
+    fun goToCustomBookEdit(bookId: Int)
     fun goToAuthorBooks(authorName: String)
     fun goBack()
     fun navigate(route: String)
@@ -23,6 +22,10 @@ class NavigatorImpl(
 
     override fun goToCustomBookDetail(bookId: Int) {
         navController.navigate("custom_book_detail/$bookId")
+    }
+
+    override fun goToCustomBookEdit(bookId: Int) {
+        navController.navigate("custom_book_edit/$bookId")
     }
 
     override fun goToAuthorBooks(authorName: String) {

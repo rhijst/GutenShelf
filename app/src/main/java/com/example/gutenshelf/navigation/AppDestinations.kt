@@ -3,12 +3,13 @@ import com.example.gutenshelf.R
 
 enum class AppDestinations(val route: String, ) {
     HOME("home"),
-    FAVORITE("favorite"),
+    MAP("map"),
     SHELFS("shelfs"),
     CUSTOM_BOOKS("custom_books"),
     ADD_CUSTOM_BOOK("add_custom_book"),
 
     CUSTOM_BOOK_DETAIL("custom_book_detail/{bookId}"),
+    CUSTOM_BOOK_EDIT("custom_book_edit/{bookId}"),
 
     SEARCH("search"),
     SETTINGS("settings" ),
@@ -25,9 +26,9 @@ data class NavBarDestination(
 // Only the screens that appear in the nav bar
 val NavBarDestinations = listOf(
     NavBarDestination(AppDestinations.HOME.route, R.drawable.home, "Home"),
-    NavBarDestination(AppDestinations.FAVORITE.route, R.drawable.heart, "Favorite"),
     NavBarDestination(AppDestinations.SHELFS.route, R.drawable.books, "Shelf's"),
     NavBarDestination(AppDestinations.CUSTOM_BOOKS.route, R.drawable.book, "Books"),
     NavBarDestination(AppDestinations.SEARCH.route, R.drawable.search, "Search"),
+    NavBarDestination(AppDestinations.MAP.route, R.drawable.mapmarker, "Map"),
     NavBarDestination(AppDestinations.SETTINGS.route, R.drawable.gears, "Settings")
 )
