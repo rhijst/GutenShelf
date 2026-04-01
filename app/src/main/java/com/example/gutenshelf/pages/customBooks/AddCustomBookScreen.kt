@@ -51,7 +51,7 @@ fun AddCustomBookScreen() {
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues)
-                    .verticalScroll(rememberScrollState()) // Make scrollable
+                    .verticalScroll(rememberScrollState())
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
@@ -135,4 +135,6 @@ fun AddCustomBookScreen() {
             }
         }
     )
+
+
 }

@@ -82,6 +82,30 @@ class CustomBooksViewModel(private val context: Context) : ViewModel() {
     }
 
 
+    fun removeBook(bookId: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val books = customBooks.toMutableList()
+            val bookToRemove = books.find { it.id == bookId }
+
+            if (bookToRemove != null) {
+
+                // Delete cover file if it exists
+                bookToRemove.formats["image/jpeg"]?.let { path ->
+                    val file = File(path)
+                    if (file.exists()) file.delete()
+                }
+
+                books.remove(bookToRemove)
+                BookDiskCache.save(context, books, CacheType.CUSTOM_BOOKS)
+
+                withContext(Dispatchers.Main) {
+                    customBooks = books
+                    message = "Book removed successfully!"
+                }
+            }
+        }
+    }
+
     fun clearMessage() {
         message = null
     }

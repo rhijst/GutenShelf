@@ -47,14 +47,24 @@ fun CustomBooksScreen() {
 
                 LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     items(viewModel.customBooks) { book ->
-                        Text(
-                            text = "${book.title} by ${book.authors.joinToString { it.name }}",
-                            modifier = Modifier.clickable {
-                                navigator.goToCustomBookDetail(book.id)
-                            },
-                            color = MaterialTheme.colorScheme.primary,
-                            style = MaterialTheme.typography.bodyLarge.copy(textDecoration = TextDecoration.Underline)
-                        )
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(
+                                text = "${book.title} by ${book.authors.joinToString { it.name }}",
+                                modifier = Modifier
+                                    .clickable { navigator.goToCustomBookDetail(book.id) }
+                            )
+
+                            Text(
+                                text = "Delete",
+                                color = MaterialTheme.colorScheme.error,
+                                modifier = Modifier.clickable {
+                                    viewModel.removeBook(book.id)
+                                }
+                            )
+                        }
                     }
                 }
             }

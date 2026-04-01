@@ -1,8 +1,5 @@
 package com.example.gutenshelf.pages.customBooks
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -21,6 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.gutenshelf.models.CustomBooksViewModel
 import com.example.gutenshelf.navigation.LocalNavigator
+import com.example.gutenshelf.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -28,6 +26,7 @@ fun CustomBookDetailScreen(bookId: Int) {
     val context = LocalContext.current
     val viewModel = remember { CustomBooksViewModel(context) }
     val navigator = LocalNavigator.current
+    var showDialog by remember { mutableStateOf(false) }
 
     val book by remember { derivedStateOf { viewModel.customBooks.find { it.id == bookId } } }
 
@@ -45,8 +44,19 @@ fun CustomBookDetailScreen(bookId: Int) {
                 navigationIcon = {
                     IconButton(onClick = { navigator.goBack() }) {
                         Icon(
-                            painter = painterResource(id = com.example.gutenshelf.R.drawable.back),
+                            painter = painterResource(id =R.drawable.back),
                             contentDescription = "Back"
+                        )
+                    }
+                },
+                actions = {
+                    IconButton(onClick = {
+                        viewModel.removeBook(bookId)
+                        navigator.goBack()
+                    }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.trash),
+                            contentDescription = "Delete"
                         )
                     }
                 }
@@ -56,7 +66,7 @@ fun CustomBookDetailScreen(bookId: Int) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .verticalScroll(rememberScrollState()) // Scrollable
+                    .verticalScroll(rememberScrollState())
                     .padding(paddingValues)
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -93,4 +103,26 @@ fun CustomBookDetailScreen(bookId: Int) {
             }
         }
     )
+
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            title = { Text("Delete Book") },
+            text = { Text("Are you sure you want to delete this book?") },
+            confirmButton = {
+                TextButton(onClick = {
+                    viewModel.removeBook(bookId)
+                    showDialog = false
+                    navigator.goBack()
+                }) {
+                    Text("Delete")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDialog = false }) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
 }
