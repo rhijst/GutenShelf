@@ -13,27 +13,29 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
-//import com.example.gutenshelf.utils.saveBitmapToFile
 
-class CustomBooksViewModel(private val context: Context) : ViewModel() {
-
+class CustomBooksViewModel : ViewModel() {
     var customBooks by mutableStateOf<List<Book>>(emptyList())
         private set
 
     var message by mutableStateOf<String?>(null)
         private set
 
-    init {
-        loadCustomBooks()
-    }
+    var isLoading by mutableStateOf(false)
+        private set
 
-    private fun loadCustomBooks() {
+    fun loadCustomBooks(context: Context) {
+        if (customBooks.isNotEmpty()) return
+
+        isLoading = true
+
         // CoroutineScope to load books
         viewModelScope.launch(Dispatchers.IO) {
             val loaded = BookDiskCache.load(context, CacheType.CUSTOM_BOOKS)
 
             // Update main thread
             withContext(Dispatchers.Main) {
+                isLoading = false
                 customBooks = loaded
             }
         }
@@ -41,6 +43,7 @@ class CustomBooksViewModel(private val context: Context) : ViewModel() {
 
 
     fun addBook(
+        context: Context,
         title: String,
         authors: List<Author>,
         localCover: Bitmap? = null,
@@ -81,8 +84,59 @@ class CustomBooksViewModel(private val context: Context) : ViewModel() {
         }
     }
 
+    fun updateBook(
+        context: Context,
+        bookId: Int,
+        title: String,
+        authors: List<Author>,
+        localCover: Bitmap? = null,
+        summaries: List<String> = emptyList(),
+        subjects: List<String> = emptyList(),
+        languages: List<String> = emptyList()
+    ) {
+        if (title.isBlank() || authors.isEmpty()) {
+            message = "Please fill in at least title and one author"
+            return
+        }
 
-    fun removeBook(bookId: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val books = customBooks.toMutableList()
+            val index = books.indexOfFirst { it.id == bookId }
+
+            if (index != -1) {
+                val existing = books[index]
+
+                // If new cover provided → overwrite file
+                val coverPath = localCover?.let {
+                    saveBitmapToFile(context, it, bookId)
+                } ?: existing.formats["image/jpeg"]
+
+                val updatedBook = existing.copy(
+                    title = title,
+                    authors = authors,
+                    localCover = localCover ?: existing.localCover,
+                    formats = coverPath?.let { mapOf("image/jpeg" to it) } ?: emptyMap(),
+                    summaries = summaries,
+                    subjects = subjects,
+                    languages = languages
+                )
+
+                books[index] = updatedBook
+                BookDiskCache.save(context, books, CacheType.CUSTOM_BOOKS)
+
+                withContext(Dispatchers.Main) {
+                    customBooks = books
+                    message = "Book updated successfully!"
+                }
+            }
+        }
+    }
+
+    fun removeBook(
+        context: Context,
+        bookId: Int
+    )
+    {
         viewModelScope.launch(Dispatchers.IO) {
             val books = customBooks.toMutableList()
             val bookToRemove = books.find { it.id == bookId }

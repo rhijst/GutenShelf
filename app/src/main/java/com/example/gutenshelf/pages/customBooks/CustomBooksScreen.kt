@@ -8,19 +8,20 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.gutenshelf.models.CustomBooksViewModel
-import com.example.gutenshelf.models.Book
 import com.example.gutenshelf.navigation.LocalNavigator
 
 @Composable
 fun CustomBooksScreen() {
     val context = LocalContext.current
     val navigator = LocalNavigator.current
-    val viewModel = remember { CustomBooksViewModel(context) }
+    val viewModel: CustomBooksViewModel = viewModel()
 
+    LaunchedEffect(Unit) {
+        viewModel.loadCustomBooks(context)
+    }
 
     Scaffold(
         floatingActionButton = {
@@ -61,7 +62,7 @@ fun CustomBooksScreen() {
                                 text = "Delete",
                                 color = MaterialTheme.colorScheme.error,
                                 modifier = Modifier.clickable {
-                                    viewModel.removeBook(book.id)
+                                    viewModel.removeBook(context, book.id)
                                 }
                             )
                         }

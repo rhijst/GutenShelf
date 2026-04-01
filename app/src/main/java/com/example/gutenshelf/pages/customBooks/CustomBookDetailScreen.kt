@@ -16,6 +16,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.gutenshelf.models.CustomBooksViewModel
 import com.example.gutenshelf.navigation.LocalNavigator
 import com.example.gutenshelf.R
@@ -24,11 +25,15 @@ import com.example.gutenshelf.R
 @Composable
 fun CustomBookDetailScreen(bookId: Int) {
     val context = LocalContext.current
-    val viewModel = remember { CustomBooksViewModel(context) }
+    val viewModel: CustomBooksViewModel = viewModel()
     val navigator = LocalNavigator.current
     var showDialog by remember { mutableStateOf(false) }
 
-    val book by remember { derivedStateOf { viewModel.customBooks.find { it.id == bookId } } }
+    LaunchedEffect(Unit) {
+        viewModel.loadCustomBooks(context)
+    }
+
+    val book = viewModel.customBooks.find { it.id == bookId }
 
     if (book == null) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -51,11 +56,21 @@ fun CustomBookDetailScreen(bookId: Int) {
                 },
                 actions = {
                     IconButton(onClick = {
-                        viewModel.removeBook(bookId)
-                        navigator.goBack()
+                        navigator.goToCustomBookEdit(bookId)
+                    }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.pencil),
+                            modifier = Modifier.size(24.dp),
+                            contentDescription = "Edit"
+                        )
+                    }
+
+                    IconButton(onClick = {
+                        showDialog = true
                     }) {
                         Icon(
                             painter = painterResource(id = R.drawable.trash),
+                            modifier = Modifier.size(24.dp),
                             contentDescription = "Delete"
                         )
                     }
@@ -71,7 +86,6 @@ fun CustomBookDetailScreen(bookId: Int) {
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                // Show cover
                 book!!.localCover?.let { bitmap ->
                     Image(
                         bitmap = bitmap.asImageBitmap(),
@@ -111,7 +125,7 @@ fun CustomBookDetailScreen(bookId: Int) {
             text = { Text("Are you sure you want to delete this book?") },
             confirmButton = {
                 TextButton(onClick = {
-                    viewModel.removeBook(bookId)
+                    viewModel.removeBook(context, bookId)
                     showDialog = false
                     navigator.goBack()
                 }) {

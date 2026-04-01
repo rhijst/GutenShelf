@@ -25,7 +25,7 @@ import com.example.gutenshelf.navigation.LocalNavigator
 fun AddCustomBookScreen() {
     val context = LocalContext.current
     val navigator = LocalNavigator.current
-    val viewModel = remember { CustomBooksViewModel(context) }
+    val viewModel: CustomBooksViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 
     var title by remember { mutableStateOf("") }
     var authorsInput by remember { mutableStateOf("") }
@@ -42,6 +42,10 @@ fun AddCustomBookScreen() {
                 coverBitmap = BitmapFactory.decodeStream(stream)
             }
         }
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.loadCustomBooks(context)
     }
 
     Scaffold(
@@ -114,6 +118,7 @@ fun AddCustomBookScreen() {
                         val languages = languagesInput.split(",").map { it.trim() }.filter { it.isNotEmpty() }
 
                         viewModel.addBook(
+                            context = context,
                             title = title,
                             authors = authors,
                             localCover = coverBitmap,
