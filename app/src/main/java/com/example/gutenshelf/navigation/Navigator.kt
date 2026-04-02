@@ -5,9 +5,14 @@ import android.net.Uri
 
 interface Navigator {
     fun goToBookDetail(bookId: Int)
+
     fun goToCustomBookDetail(bookId: Int)
     fun goToCustomBookEdit(bookId: Int)
+
     fun goToAuthorBooks(authorName: String)
+
+    fun goToShelfDetail(shelfId: Int)
+
     fun goBack()
     fun navigate(route: String)
 }
@@ -31,6 +36,11 @@ class NavigatorImpl(
     override fun goToAuthorBooks(authorName: String) {
         val encoded = Uri.encode(authorName)
         navController.navigate("author_books/$encoded")
+    }
+
+
+    override fun goToShelfDetail(shelfId: Int){
+        navController.navigate("shelf_detail/$shelfId")
     }
 
     override fun goBack() {

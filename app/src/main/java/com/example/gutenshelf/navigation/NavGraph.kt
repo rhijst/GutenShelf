@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -12,6 +13,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.gutenshelf.models.CustomBooksViewModel
+import com.example.gutenshelf.models.ShelvesViewModel
 import com.example.gutenshelf.pages.authorPage.AuthorBooksScreen
 
 // Pages
@@ -25,12 +27,14 @@ import com.example.gutenshelf.pages.bookDetail.BookDetailScreen
 import com.example.gutenshelf.pages.customBooks.AddCustomBookScreen
 import com.example.gutenshelf.pages.customBooks.CustomBookDetailScreen
 import com.example.gutenshelf.pages.customBooks.EditCustomBookScreen
+import com.example.gutenshelf.pages.shelfs.AddShelfScreen
 
 @Composable
-fun AppNavGraph(
-        navController: NavHostController
-    ){
+fun AppNavGraph(navController: NavHostController) {
+
+    val context = LocalContext.current
     val customBooksViewModel: CustomBooksViewModel = viewModel()
+    val shelvesViewModel: ShelvesViewModel = viewModel()
 
     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
         NavHost(
@@ -42,10 +46,11 @@ fun AppNavGraph(
             composable(AppDestinations.MAP.route) { MapScreen() }
             composable(AppDestinations.CUSTOM_BOOKS.route) { CustomBooksScreen(customBooksViewModel) }
             composable(AppDestinations.ADD_CUSTOM_BOOK.route) { AddCustomBookScreen(customBooksViewModel) }
-            composable(AppDestinations.SHELFS.route) { ShelfsScreen() }
+            composable(AppDestinations.SHELFS.route) { ShelfsScreen(shelvesViewModel) }
             composable(AppDestinations.SEARCH.route) { SearchScreen() }
             composable(AppDestinations.SETTINGS.route) { SettingsScreen() }
 
+            // Book Detail
             composable(
                 route = AppDestinations.BOOK_DETAIL.route,
                 arguments = listOf(navArgument("bookId") { type = NavType.IntType })
@@ -54,14 +59,16 @@ fun AppNavGraph(
                 BookDetailScreen(bookId)
             }
 
+            // Author Books
             composable(
-                route = AppDestinations.AUTHOR_BOOKS.route ,
+                route = AppDestinations.AUTHOR_BOOKS.route,
                 arguments = listOf(navArgument("authorName") { type = NavType.StringType })
             ) { backStackEntry ->
                 val authorName = backStackEntry.arguments?.getString("authorName") ?: ""
                 AuthorBooksScreen(authorName = authorName)
             }
 
+            // Custom Books
             composable(
                 route = AppDestinations.CUSTOM_BOOK_DETAIL.route,
                 arguments = listOf(navArgument("bookId") { type = NavType.IntType })
@@ -72,11 +79,37 @@ fun AppNavGraph(
 
             composable(AppDestinations.CUSTOM_BOOK_EDIT.route) { backStackEntry ->
                 val bookId = backStackEntry.arguments?.getString("bookId")?.toIntOrNull()
-
                 if (bookId != null) {
                     EditCustomBookScreen(bookId = bookId, viewModel = customBooksViewModel)
                 }
             }
+
+            // Shelves CRUD
+            composable(AppDestinations.ADD_SHELF.route) { AddShelfScreen(shelvesViewModel) }
+            composable(
+                route = AppDestinations.EDIT_SHELF.route,
+                arguments = listOf(navArgument("shelfId") { type = NavType.IntType })
+            ) { backStackEntry ->
+                val shelfId = backStackEntry.arguments?.getInt("shelfId") ?: 0
+                EditShelfScreen(shelfId, shelvesViewModel)
+            }
+            composable(
+                route = AppDestinations.SHELF_DETAIL.route,
+                arguments = listOf(navArgument("shelfId") { type = NavType.IntType })
+            ) { backStackEntry ->
+                val shelfId = backStackEntry.arguments?.getInt("shelfId") ?: 0
+                ShelfDetailScreen(shelfId, shelvesViewModel)
+            }
         }
     }
+}
+
+@Composable
+fun ShelfDetailScreen(x0: Int, x1: ShelvesViewModel) {
+    TODO("Not yet implemented")
+}
+
+@Composable
+fun EditShelfScreen(x0: Int, x1: ShelvesViewModel) {
+    TODO("Not yet implemented")
 }

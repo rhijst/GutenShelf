@@ -4,10 +4,16 @@ import com.example.gutenshelf.R
 enum class AppDestinations(val route: String, ) {
     HOME("home"),
     MAP("map"),
+
+    // Shelfs
     SHELFS("shelfs"),
+    ADD_SHELF("add_shelf"),
+    EDIT_SHELF("edit_shelf/{shelfId}"),
+    SHELF_DETAIL("shelf_detail/{shelfId}"),
+
+    // Books
     CUSTOM_BOOKS("custom_books"),
     ADD_CUSTOM_BOOK("add_custom_book"),
-
     CUSTOM_BOOK_DETAIL("custom_book_detail/{bookId}"),
     CUSTOM_BOOK_EDIT("custom_book_edit/{bookId}"),
 
