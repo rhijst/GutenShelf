@@ -18,6 +18,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.graphics.asImageBitmap
 import com.example.gutenshelf.models.Author
 import com.example.gutenshelf.models.CustomBooksViewModel
+import com.example.gutenshelf.navigation.AppDestinations
 import com.example.gutenshelf.navigation.LocalNavigator
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -127,7 +128,7 @@ fun AddCustomBookScreen() {
                             languages = languages
                         )
 
-                        navigator.goBack()
+                        navigator.navigate(AppDestinations.CUSTOM_BOOKS.route)
                     },
                     modifier = Modifier.fillMaxWidth()
                 ) {

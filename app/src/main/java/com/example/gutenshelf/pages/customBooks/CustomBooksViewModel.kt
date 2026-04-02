@@ -68,10 +68,12 @@ class CustomBooksViewModel : ViewModel() {
                 title = title,
                 authors = authors,
                 localCover = localCover,
+                localCoverPath = coverPath,
                 formats = coverPath?.let { mapOf("image/jpeg" to it) } ?: emptyMap(),
                 summaries = summaries,
                 subjects = subjects,
-                languages = languages
+                languages = languages,
+                type = BookType.CUSTOM
             )
 
             books.add(newBook)
@@ -115,7 +117,7 @@ class CustomBooksViewModel : ViewModel() {
                     title = title,
                     authors = authors,
                     localCover = localCover ?: existing.localCover,
-                    formats = coverPath?.let { mapOf("image/jpeg" to it) } ?: emptyMap(),
+                    localCoverPath = coverPath,
                     summaries = summaries,
                     subjects = subjects,
                     languages = languages
@@ -144,7 +146,7 @@ class CustomBooksViewModel : ViewModel() {
             if (bookToRemove != null) {
 
                 // Delete cover file if it exists
-                bookToRemove.formats["image/jpeg"]?.let { path ->
+                bookToRemove.localCoverPath?.let { path ->
                     val file = File(path)
                     if (file.exists()) file.delete()
                 }
@@ -165,7 +167,7 @@ class CustomBooksViewModel : ViewModel() {
     }
 
     fun saveBitmapToFile(context: Context, bitmap: Bitmap, bookId: Int): String {
-        val file = File(context.filesDir, "cover_$bookId.png")
+        val file = BookDiskCache.getCustomCoverFile(context, bookId)
         file.outputStream().use { out ->
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
         }

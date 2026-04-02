@@ -1,15 +1,14 @@
 package com.example.gutenshelf.pages.customBooks
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.gutenshelf.composables.BookGrid
+import com.example.gutenshelf.composables.HeaderSection
 import com.example.gutenshelf.models.CustomBooksViewModel
 import com.example.gutenshelf.navigation.LocalNavigator
 
@@ -25,9 +24,7 @@ fun CustomBooksScreen() {
 
     Scaffold(
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = { navigator.navigate("add_custom_book") }
-            ) {
+            FloatingActionButton(onClick = { navigator.navigate("add_custom_book") }) {
                 Text("+")
             }
         },
@@ -36,37 +33,17 @@ fun CustomBooksScreen() {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(paddingValues)
-                    .padding(horizontal = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Text("Your Custom Books", style = MaterialTheme.typography.titleLarge)
+                HeaderSection("Your Custom Books")
 
                 if (viewModel.customBooks.isEmpty()) {
                     Text("No custom books yet. Tap + to add one!")
-                }
-
-                LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    items(viewModel.customBooks) { book ->
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Text(
-                                text = "${book.title} by ${book.authors.joinToString { it.name }}",
-                                modifier = Modifier
-                                    .clickable { navigator.goToCustomBookDetail(book.id) }
-                            )
-
-                            Text(
-                                text = "Delete",
-                                color = MaterialTheme.colorScheme.error,
-                                modifier = Modifier.clickable {
-                                    viewModel.removeBook(context, book.id)
-                                }
-                            )
-                        }
-                    }
+                } else {
+                    // Let BookGrid handle its own scrolling
+                    BookGrid(
+                        books = viewModel.customBooks,
+                        modifier = Modifier.fillMaxSize()
+                    )
                 }
             }
         }

@@ -21,6 +21,7 @@ import com.example.gutenshelf.R
 import com.example.gutenshelf.models.Book
 import com.example.gutenshelf.navigation.LocalNavigator
 import com.example.gutenshelf.cache.ImageCache
+import com.example.gutenshelf.models.BookType
 import com.example.gutenshelf.network.VolleySingleton
 
 @Composable
@@ -30,40 +31,51 @@ fun BookItem(book: Book) {
         val navigator = LocalNavigator.current
 
         // Only relookup if URL changes
-        val cached = remember(book.coverUrl) {
-            book.coverUrl?.let { ImageCache.get(it) }
+        var bitmap by remember(book.coverUrl) {
+            mutableStateOf(
+                if (book.type == BookType.CUSTOM) {
+                    // Load from local file
+                    book.localCover
+                } else {
+                    // Try cached API image
+                    book.coverUrl?.let { ImageCache.get(it) }
+                }
+            )
         }
 
-        // Image
-        var bitmap by remember { mutableStateOf(cached) }
-
+        // Load API images if needed
         LaunchedEffect(book.coverUrl) {
-            // URL calidation
-            val url = book.coverUrl ?: return@LaunchedEffect
+            if (book.type == BookType.API) {
+                val url = book.coverUrl ?: return@LaunchedEffect
+                if (ImageCache.get(url) != null) {
+                    bitmap = ImageCache.get(url)
+                    return@LaunchedEffect
+                }
 
-            // If already chached skip
-            if (ImageCache.get(url) != null) return@LaunchedEffect
-
-            // Create request for image
-            val imageRequest = ImageRequest(
-                url,
-                { response ->
-                    ImageCache.put(url, response) // Cach the image
-                    bitmap = response
-                },
-                0, 0, null, Bitmap.Config.RGB_565,
-                { /* error */ }
-            )
-
-            // Queue image request
-            VolleySingleton.getInstance(context).addToRequestQueue(imageRequest)
+                val imageRequest = ImageRequest(
+                    url,
+                    { response ->
+                        ImageCache.put(url, response)
+                        bitmap = response
+                    },
+                    0, 0, null, Bitmap.Config.RGB_565,
+                    { /* error */ }
+                )
+                VolleySingleton.getInstance(context).addToRequestQueue(imageRequest)
+            }
         }
 
         Column(
             modifier = Modifier
                 .padding(8.dp)
                 .width(120.dp)
-                .clickable { (navigator::goToBookDetail)(book.id) }
+                .clickable {
+                    if (book.type == BookType.API) {
+                        navigator.goToBookDetail(book.id)
+                    } else {
+                        navigator.goToCustomBookDetail(book.id)
+                    }
+                }
         ) {
             if (bitmap == null) {
                 Image( // Placeholder
