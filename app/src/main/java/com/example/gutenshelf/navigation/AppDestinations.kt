@@ -26,9 +26,9 @@ data class NavBarDestination(
 // Only the screens that appear in the nav bar
 val NavBarDestinations = listOf(
     NavBarDestination(AppDestinations.HOME.route, R.drawable.home, "Home"),
-    NavBarDestination(AppDestinations.SHELFS.route, R.drawable.books, "Shelf's"),
-    NavBarDestination(AppDestinations.CUSTOM_BOOKS.route, R.drawable.book, "Books"),
+    NavBarDestination(AppDestinations.SHELFS.route, R.drawable.book, "Shelf's"),
+    NavBarDestination(AppDestinations.CUSTOM_BOOKS.route, R.drawable.books, "Books"),
     NavBarDestination(AppDestinations.SEARCH.route, R.drawable.search, "Search"),
     NavBarDestination(AppDestinations.MAP.route, R.drawable.mapmarker, "Map"),
-    NavBarDestination(AppDestinations.SETTINGS.route, R.drawable.gears, "Settings")
+    NavBarDestination(AppDestinations.SETTINGS.route, R.drawable.settings, "Settings")
 )
