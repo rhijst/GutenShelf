@@ -1,19 +1,20 @@
-package com.example.gutenshelf.models
+package com.example.gutenshelf.pages.home
 
 import android.content.Context
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.gutenshelf.cache.BookDiskCache
 import com.example.gutenshelf.cache.CacheType
+import com.example.gutenshelf.models.Book
 import com.example.gutenshelf.network.BookRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class BooksViewModel(
+class HomeViewModel(
     private val context: Context,
     private val repository: BookRepository
 ) : ViewModel() {

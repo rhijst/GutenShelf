@@ -9,10 +9,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.gutenshelf.composables.HeaderSection
 import com.example.gutenshelf.composables.BookRow
-import com.example.gutenshelf.models.BooksViewModel
+import com.example.gutenshelf.pages.home.HomeViewModel
 import com.example.gutenshelf.network.BookRepository
 import com.example.gutenshelf.cache.PreferenceStore
 
@@ -21,7 +20,7 @@ fun HomeScreen() {
     val context = LocalContext.current
 
     val repository = remember { BookRepository(context) }
-    val viewModel: BooksViewModel = remember { BooksViewModel(context, repository) }
+    val viewModel: HomeViewModel = remember { HomeViewModel(context, repository) }
     val preferenceStore = remember { PreferenceStore(context) }
 
     val books = viewModel.books
