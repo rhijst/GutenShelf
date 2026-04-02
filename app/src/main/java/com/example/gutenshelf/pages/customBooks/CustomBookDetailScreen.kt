@@ -1,6 +1,7 @@
 package com.example.gutenshelf.pages.customBooks
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -23,7 +24,10 @@ import com.example.gutenshelf.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CustomBookDetailScreen(bookId: Int, viewModel: CustomBooksViewModel = viewModel()) {
+fun CustomBookDetailScreen(
+    bookId: Int,
+    viewModel: CustomBooksViewModel = viewModel()
+) {
     val context = LocalContext.current
     val navigator = LocalNavigator.current
     var showDialog by remember { mutableStateOf(false) }
@@ -44,12 +48,13 @@ fun CustomBookDetailScreen(bookId: Int, viewModel: CustomBooksViewModel = viewMo
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(book.title) },
+                title = { Text("Book Details") },
                 navigationIcon = {
                     IconButton(onClick = { navigator.goBack() }) {
                         Icon(
                             painter = painterResource(id = R.drawable.back),
-                            contentDescription = "Back"
+                            contentDescription = "Back",
+                            modifier = Modifier.size(20.dp)
                         )
                     }
                 },
@@ -75,47 +80,115 @@ fun CustomBookDetailScreen(bookId: Int, viewModel: CustomBooksViewModel = viewMo
                     }
                 }
             )
-        },
-        content = { paddingValues ->
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .padding(paddingValues)
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                book.localCover?.let { bitmap ->
+        }
+    ) { innerPadding ->
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(innerPadding)
+                .padding(16.dp)
+        ) {
+
+            Row(modifier = Modifier.fillMaxWidth()) {
+
+                // Cover links
+                if (book.localCover != null) {
                     Image(
-                        bitmap = bitmap.asImageBitmap(),
-                        contentDescription = "Cover",
+                        bitmap = book.localCover!!.asImageBitmap(),
+                        contentDescription = book.title,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .height(200.dp)
+                            .width(120.dp)
+                            .height(180.dp)
+                            .clip(RoundedCornerShape(8.dp))
+                    )
+                } else {
+                    Image(
+                        painter = painterResource(R.drawable.cover),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .width(120.dp)
+                            .height(180.dp)
                             .clip(RoundedCornerShape(8.dp))
                     )
                 }
 
+                Spacer(modifier = Modifier.width(16.dp))
+
+                Column {
+
+                    Text(
+                        text = book.title,
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.Bold
+                    )
+
+                    Spacer(modifier = Modifier.height(4.dp))
+
+                    Column {
+                        book.authors.forEach { author ->
+                            Text(
+                                text = author.name,
+                                style = MaterialTheme.typography.bodyLarge.copy(
+                                    color = MaterialTheme.colorScheme.secondary
+                                ),
+                                modifier = Modifier.clickable {
+                                    navigator.goToAuthorBooks(author.name)
+                                }
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    if (book.languages.isNotEmpty()) {
+                        Text(
+                            text = "Languages: ${book.languages.joinToString()}",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            if (book.summaries.isNotEmpty()) {
                 Text(
-                    "Title: ${book.title}",
+                    text = "Summary",
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold
                 )
 
-                Text("Authors: ${book.authors.joinToString { it.name }}")
+                Spacer(modifier = Modifier.height(8.dp))
 
-                if (book.summaries.isNotEmpty())
-                    Text("Summaries: ${book.summaries.joinToString()}")
+                book.summaries.forEach { summary ->
+                    Text(
+                        text = summary,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
+            }
 
-                if (book.subjects.isNotEmpty())
-                    Text("Subjects: ${book.subjects.joinToString()}")
+            if (book.subjects.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(16.dp))
 
-                if (book.languages.isNotEmpty())
-                    Text("Languages: ${book.languages.joinToString()}")
+                Text(
+                    text = "Subjects",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
+
+                Text(
+                    text = book.subjects.joinToString("\n"),
+                    style = MaterialTheme.typography.bodyMedium
+                )
             }
         }
-    )
+    }
 
     if (showDialog) {
         AlertDialog(
