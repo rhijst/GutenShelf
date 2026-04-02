@@ -15,8 +15,11 @@ import androidx.compose.ui.layout.ContentScale
 import android.graphics.BitmapFactory
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.res.painterResource
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.gutenshelf.R
 import com.example.gutenshelf.models.Author
 import com.example.gutenshelf.models.CustomBooksViewModel
 import com.example.gutenshelf.navigation.AppDestinations
@@ -50,7 +53,20 @@ fun AddCustomBookScreen(viewModel: CustomBooksViewModel = viewModel()) {
     }
 
     Scaffold(
-        topBar = { TopAppBar(title = { Text("Add Custom Book") }) },
+        topBar = {
+            TopAppBar(
+                title = { Text("Add Custom Book") },
+                navigationIcon = {
+                    IconButton(onClick = { navigator.navigate(AppDestinations.CUSTOM_BOOKS.route) }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.back),
+                            contentDescription = "Back",
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+                }
+            )
+        },
         content = { paddingValues ->
             Column(
                 modifier = Modifier
@@ -95,19 +111,25 @@ fun AddCustomBookScreen(viewModel: CustomBooksViewModel = viewModel()) {
                     modifier = Modifier.fillMaxWidth()
                 )
 
-                // Show preview image
-                coverBitmap?.let {
-                    Image(
-                        bitmap = it.asImageBitmap(),
-                        contentDescription = "Cover Preview",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(200.dp)
-                    )
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    coverBitmap?.let {
+                        Image(
+                            bitmap = it.asImageBitmap(),
+                            contentDescription = "Cover Preview",
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier
+                                .fillMaxWidth(0.4f)
+                                .aspectRatio(0.67f)
+                        )
+                    }
                 }
 
-                Button(onClick = { launcher.launch("image/*") }) {
+                Button(onClick = { launcher.launch("image/*") },
+                    modifier = Modifier
+                    .fillMaxWidth() ) {
                     Text("Pick Cover Image")
                 }
 
@@ -134,13 +156,7 @@ fun AddCustomBookScreen(viewModel: CustomBooksViewModel = viewModel()) {
                 ) {
                     Text("Add Book")
                 }
-
-                viewModel.message?.let {
-                    Text(it, color = MaterialTheme.colorScheme.primary)
-                }
             }
         }
     )
-
-
 }
