@@ -22,6 +22,7 @@ import com.example.gutenshelf.pages.settings.SettingsScreen
 import com.example.gutenshelf.pages.bookDetail.BookDetailScreen
 import com.example.gutenshelf.pages.customBooks.AddCustomBookScreen
 import com.example.gutenshelf.pages.customBooks.CustomBookDetailScreen
+import com.example.gutenshelf.pages.customBooks.EditCustomBookScreen
 
 @Composable
 fun AppNavGraph(
@@ -69,7 +70,7 @@ fun AppNavGraph(
                 val bookId = backStackEntry.arguments?.getString("bookId")?.toIntOrNull()
 
                 if (bookId != null) {
-//                    EditCustomBookScreen(bookId = bookId)
+                    EditCustomBookScreen(bookId = bookId)
                 }
             }
         }
