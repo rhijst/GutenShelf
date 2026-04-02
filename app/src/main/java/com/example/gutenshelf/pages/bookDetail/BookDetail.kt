@@ -1,5 +1,6 @@
 package com.example.gutenshelf.pages.bookDetail
 
+import android.content.res.Configuration
 import android.graphics.Bitmap
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -14,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -35,6 +37,9 @@ fun BookDetailScreen(bookId: Int) {
     var isLoading by remember { mutableStateOf(true) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
     var bitmap by remember { mutableStateOf<Bitmap?>(null) }
+
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
     LaunchedEffect(bookId) {
         repository.fetchBookById(
@@ -84,103 +89,108 @@ fun BookDetailScreen(bookId: Int) {
                 Text(text = "Error: $errorMessage", modifier = Modifier.align(Alignment.Center))
             } else if (book != null) {
                 val currentBook = book!!
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .verticalScroll(rememberScrollState())
-                        .padding(16.dp)
-                ) {
-                    Row(modifier = Modifier.fillMaxWidth()) {
-                        if (bitmap != null) {
-                            Image(
-                                bitmap = bitmap!!.asImageBitmap(),
-                                contentDescription = currentBook.title,
-                                contentScale = ContentScale.Crop,
-                                modifier = Modifier
-                                    .width(120.dp)
-                                    .height(180.dp)
-                                    .clip(RoundedCornerShape(8.dp))
-                            )
-                        } else {
-                            Image(
-                                painter = painterResource(R.drawable.cover),
-                                contentDescription = null,
-                                contentScale = ContentScale.Crop,
-                                modifier = Modifier
-                                    .width(120.dp)
-                                    .height(180.dp)
-                                    .clip(RoundedCornerShape(8.dp))
-                            )
-                        }
 
-                        Spacer(modifier = Modifier.width(16.dp))
-
-                        Column {
-                            Text(
-                                text = currentBook.title,
-                                style = MaterialTheme.typography.headlineSmall,
-                                fontWeight = FontWeight.Bold
-                            )
-
-                            Spacer(modifier = Modifier.height(4.dp))
-
-                            // List of clickable authors
-                            Column {
-                                currentBook.authors.forEachIndexed { index, author ->
-                                    Text(
-                                        text = author.name,
-                                        style = MaterialTheme.typography.bodyLarge.copy(
-                                            color = MaterialTheme.colorScheme.secondary
-                                        ),
-                                        modifier = Modifier.clickable {
-                                            navigator.goToAuthorBooks(author.name)
-                                        }
-                                    )
-                                }
+                if (isLandscape) {
+                    BookDetailLandscape(book = currentBook, bitmap = bitmap)
+                } else {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .verticalScroll(rememberScrollState())
+                            .padding(16.dp)
+                    ) {
+                        Row(modifier = Modifier.fillMaxWidth()) {
+                            if (bitmap != null) {
+                                Image(
+                                    bitmap = bitmap!!.asImageBitmap(),
+                                    contentDescription = currentBook.title,
+                                    contentScale = ContentScale.Crop,
+                                    modifier = Modifier
+                                        .width(120.dp)
+                                        .height(180.dp)
+                                        .clip(RoundedCornerShape(8.dp))
+                                )
+                            } else {
+                                Image(
+                                    painter = painterResource(R.drawable.cover),
+                                    contentDescription = null,
+                                    contentScale = ContentScale.Crop,
+                                    modifier = Modifier
+                                        .width(120.dp)
+                                        .height(180.dp)
+                                        .clip(RoundedCornerShape(8.dp))
+                                )
                             }
 
-                            Spacer(modifier = Modifier.height(8.dp))
+                            Spacer(modifier = Modifier.width(16.dp))
 
+                            Column {
+                                Text(
+                                    text = currentBook.title,
+                                    style = MaterialTheme.typography.headlineSmall,
+                                    fontWeight = FontWeight.Bold
+                                )
+
+                                Spacer(modifier = Modifier.height(4.dp))
+
+                                // List of clickable authors
+                                Column {
+                                    currentBook.authors.forEach { author ->
+                                        Text(
+                                            text = author.name,
+                                            style = MaterialTheme.typography.bodyLarge.copy(
+                                                color = MaterialTheme.colorScheme.secondary
+                                            ),
+                                            modifier = Modifier.clickable {
+                                                navigator.goToAuthorBooks(author.name)
+                                            }
+                                        )
+                                    }
+                                }
+
+                                Spacer(modifier = Modifier.height(8.dp))
+
+                                Text(
+                                    text = "Downloads: ${currentBook.download_count}",
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                                Text(
+                                    text = "Languages: ${currentBook.languages.joinToString()}",
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(24.dp))
+
+                        if (currentBook.summaries.isNotEmpty()) {
                             Text(
-                                text = "Downloads: ${currentBook.download_count}",
-                                style = MaterialTheme.typography.bodyMedium
+                                text = "Summary",
+                                style = MaterialTheme.typography.titleLarge,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            currentBook.summaries.forEach { summary ->
+                                Text(
+                                    text = summary,
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                            }
+                        }
+
+                        if (currentBook.subjects.isNotEmpty()) {
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Text(
+                                text = "Subjects",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold
                             )
                             Text(
-                                text = "Languages: ${currentBook.languages.joinToString()}",
+                                text = currentBook.subjects.joinToString("\n"),
                                 style = MaterialTheme.typography.bodyMedium
                             )
                         }
-                    }
-
-                    Spacer(modifier = Modifier.height(24.dp))
-
-                    if (currentBook.summaries.isNotEmpty()) {
-                        Text(
-                            text = "Summary",
-                            style = MaterialTheme.typography.titleLarge,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        currentBook.summaries.forEach { summary ->
-                            Text(
-                                text = summary,
-                                style = MaterialTheme.typography.bodyMedium
-                            )
-                            Spacer(modifier = Modifier.height(8.dp))
-                        }
-                    }
-
-                    if (currentBook.subjects.isNotEmpty()) {
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Text(
-                            text = "Subjects",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Text(
-                            text = currentBook.subjects.joinToString("\n"),
-                            style = MaterialTheme.typography.bodyMedium
-                        )
                     }
                 }
             }
