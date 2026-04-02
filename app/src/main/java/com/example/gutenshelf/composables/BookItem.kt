@@ -83,7 +83,7 @@ fun BookItem(book: Book) {
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
-                        .height(180.dp)
+                        .aspectRatio(0.67f)
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(8.dp))
                 )
@@ -93,7 +93,7 @@ fun BookItem(book: Book) {
                     contentDescription = book.title,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
-                        .height(180.dp)
+                        .aspectRatio(0.67f)
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(8.dp))
                 )
