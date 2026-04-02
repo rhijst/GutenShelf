@@ -16,6 +16,7 @@ import android.graphics.BitmapFactory
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.gutenshelf.models.Author
 import com.example.gutenshelf.models.CustomBooksViewModel
 import com.example.gutenshelf.navigation.AppDestinations
@@ -23,10 +24,9 @@ import com.example.gutenshelf.navigation.LocalNavigator
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddCustomBookScreen() {
+fun AddCustomBookScreen(viewModel: CustomBooksViewModel = viewModel()) {
     val context = LocalContext.current
     val navigator = LocalNavigator.current
-    val viewModel: CustomBooksViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 
     var title by remember { mutableStateOf("") }
     var authorsInput by remember { mutableStateOf("") }

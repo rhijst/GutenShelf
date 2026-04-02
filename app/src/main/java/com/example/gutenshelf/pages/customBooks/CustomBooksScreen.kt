@@ -13,10 +13,9 @@ import com.example.gutenshelf.models.CustomBooksViewModel
 import com.example.gutenshelf.navigation.LocalNavigator
 
 @Composable
-fun CustomBooksScreen() {
+fun CustomBooksScreen(viewModel: CustomBooksViewModel = viewModel()) {
     val context = LocalContext.current
     val navigator = LocalNavigator.current
-    val viewModel: CustomBooksViewModel = viewModel()
 
     LaunchedEffect(Unit) {
         viewModel.loadCustomBooks(context)

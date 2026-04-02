@@ -5,11 +5,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.example.gutenshelf.models.CustomBooksViewModel
 import com.example.gutenshelf.pages.authorPage.AuthorBooksScreen
 
 // Pages
@@ -28,6 +30,8 @@ import com.example.gutenshelf.pages.customBooks.EditCustomBookScreen
 fun AppNavGraph(
         navController: NavHostController
     ){
+    val customBooksViewModel: CustomBooksViewModel = viewModel()
+
     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
         NavHost(
             navController = navController,
@@ -36,8 +40,8 @@ fun AppNavGraph(
         ) {
             composable(AppDestinations.HOME.route) { HomeScreen() }
             composable(AppDestinations.MAP.route) { MapScreen() }
-            composable(AppDestinations.CUSTOM_BOOKS.route) { CustomBooksScreen() }
-            composable(AppDestinations.ADD_CUSTOM_BOOK.route) { AddCustomBookScreen() }
+            composable(AppDestinations.CUSTOM_BOOKS.route) { CustomBooksScreen(customBooksViewModel) }
+            composable(AppDestinations.ADD_CUSTOM_BOOK.route) { AddCustomBookScreen(customBooksViewModel) }
             composable(AppDestinations.SHELFS.route) { ShelfsScreen() }
             composable(AppDestinations.SEARCH.route) { SearchScreen() }
             composable(AppDestinations.SETTINGS.route) { SettingsScreen() }
@@ -63,14 +67,14 @@ fun AppNavGraph(
                 arguments = listOf(navArgument("bookId") { type = NavType.IntType })
             ) { backStackEntry ->
                 val bookId = backStackEntry.arguments?.getInt("bookId") ?: 0
-                CustomBookDetailScreen(bookId)
+                CustomBookDetailScreen(bookId, customBooksViewModel)
             }
 
             composable(AppDestinations.CUSTOM_BOOK_EDIT.route) { backStackEntry ->
                 val bookId = backStackEntry.arguments?.getString("bookId")?.toIntOrNull()
 
                 if (bookId != null) {
-                    EditCustomBookScreen(bookId = bookId)
+                    EditCustomBookScreen(bookId = bookId, viewModel = customBooksViewModel)
                 }
             }
         }

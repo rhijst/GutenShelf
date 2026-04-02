@@ -23,9 +23,8 @@ import com.example.gutenshelf.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CustomBookDetailScreen(bookId: Int) {
+fun CustomBookDetailScreen(bookId: Int, viewModel: CustomBooksViewModel = viewModel()) {
     val context = LocalContext.current
-    val viewModel: CustomBooksViewModel = viewModel()
     val navigator = LocalNavigator.current
     var showDialog by remember { mutableStateOf(false) }
 
@@ -45,11 +44,11 @@ fun CustomBookDetailScreen(bookId: Int) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(book!!.title) },
+                title = { Text(book.title) },
                 navigationIcon = {
                     IconButton(onClick = { navigator.goBack() }) {
                         Icon(
-                            painter = painterResource(id =R.drawable.back),
+                            painter = painterResource(id = R.drawable.back),
                             contentDescription = "Back"
                         )
                     }
@@ -86,7 +85,7 @@ fun CustomBookDetailScreen(bookId: Int) {
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                book!!.localCover?.let { bitmap ->
+                book.localCover?.let { bitmap ->
                     Image(
                         bitmap = bitmap.asImageBitmap(),
                         contentDescription = "Cover",
@@ -99,21 +98,21 @@ fun CustomBookDetailScreen(bookId: Int) {
                 }
 
                 Text(
-                    "Title: ${book!!.title}",
+                    "Title: ${book.title}",
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold
                 )
 
-                Text("Authors: ${book!!.authors.joinToString { it.name }}")
+                Text("Authors: ${book.authors.joinToString { it.name }}")
 
-                if (book!!.summaries.isNotEmpty())
-                    Text("Summaries: ${book!!.summaries.joinToString()}")
+                if (book.summaries.isNotEmpty())
+                    Text("Summaries: ${book.summaries.joinToString()}")
 
-                if (book!!.subjects.isNotEmpty())
-                    Text("Subjects: ${book!!.subjects.joinToString()}")
+                if (book.subjects.isNotEmpty())
+                    Text("Subjects: ${book.subjects.joinToString()}")
 
-                if (book!!.languages.isNotEmpty())
-                    Text("Languages: ${book!!.languages.joinToString()}")
+                if (book.languages.isNotEmpty())
+                    Text("Languages: ${book.languages.joinToString()}")
             }
         }
     )

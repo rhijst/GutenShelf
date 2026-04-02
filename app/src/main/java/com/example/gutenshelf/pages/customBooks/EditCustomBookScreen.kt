@@ -20,10 +20,9 @@ import com.example.gutenshelf.navigation.LocalNavigator
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditCustomBookScreen(bookId: Int) {
+fun EditCustomBookScreen(bookId: Int, viewModel: CustomBooksViewModel = viewModel()) {
     val context = LocalContext.current
     val navigator = LocalNavigator.current
-    val viewModel: CustomBooksViewModel = viewModel()
 
     LaunchedEffect(Unit) {
         viewModel.loadCustomBooks(context)
