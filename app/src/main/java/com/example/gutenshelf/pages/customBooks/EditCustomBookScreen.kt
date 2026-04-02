@@ -4,22 +4,20 @@ import android.graphics.BitmapFactory
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.gutenshelf.R
 import com.example.gutenshelf.models.Author
 import com.example.gutenshelf.models.CustomBooksViewModel
 import com.example.gutenshelf.navigation.LocalNavigator
@@ -66,7 +64,20 @@ fun EditCustomBookScreen(bookId: Int, viewModel: CustomBooksViewModel = viewMode
     }
 
     Scaffold(
-        topBar = { TopAppBar(title = { Text("Edit Book") }) },
+        topBar = {
+            TopAppBar(
+                title = { Text("Edit Book") },
+                navigationIcon = {
+                    IconButton(onClick = { navigator.goBack() }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.back),
+                            contentDescription = "Back",
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+                }
+            )
+        },
         content = { padding ->
             Column(
                 modifier = Modifier
@@ -96,31 +107,36 @@ fun EditCustomBookScreen(bookId: Int, viewModel: CustomBooksViewModel = viewMode
                 OutlinedTextField(
                     value = title,
                     onValueChange = { title = it },
-                    label = { Text("Title") }
+                    label = { Text("Title") },
+                    modifier = Modifier.fillMaxWidth()
                 )
 
                 OutlinedTextField(
                     value = authorsText,
                     onValueChange = { authorsText = it },
-                    label = { Text("Authors (comma separated)") }
+                    label = { Text("Authors (comma separated)") },
+                    modifier = Modifier.fillMaxWidth()
                 )
 
                 OutlinedTextField(
                     value = summariesText,
                     onValueChange = { summariesText = it },
-                    label = { Text("Summaries") }
+                    label = { Text("Summaries") },
+                    modifier = Modifier.fillMaxWidth()
                 )
 
                 OutlinedTextField(
                     value = subjectsText,
                     onValueChange = { subjectsText = it },
-                    label = { Text("Subjects") }
+                    label = { Text("Subjects") },
+                    modifier = Modifier.fillMaxWidth()
                 )
 
                 OutlinedTextField(
                     value = languagesText,
                     onValueChange = { languagesText = it },
-                    label = { Text("Languages") }
+                    label = { Text("Languages") },
+                    modifier = Modifier.fillMaxWidth()
                 )
 
                 Button(
