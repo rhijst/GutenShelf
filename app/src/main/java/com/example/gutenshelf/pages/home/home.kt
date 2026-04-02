@@ -9,21 +9,26 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.gutenshelf.composables.HeaderSection
 import com.example.gutenshelf.composables.BookRow
 import com.example.gutenshelf.models.BooksViewModel
 import com.example.gutenshelf.network.BookRepository
+import com.example.gutenshelf.cache.PreferenceStore
 
 @Composable
 fun HomeScreen() {
     val context = LocalContext.current
 
     val repository = remember { BookRepository(context) }
-    val viewModel = remember { BooksViewModel(context, repository) }
+    val viewModel: BooksViewModel = remember { BooksViewModel(context, repository) }
+    val preferenceStore = remember { PreferenceStore(context) }
 
     val books = viewModel.books
     val isLoading = viewModel.isLoading
     val errorMessage = viewModel.errorMessage
+
+    val showPopularRow by remember { mutableStateOf(preferenceStore.isPopularRowEnabled()) }
 
     Box(modifier = Modifier.fillMaxSize()) {
 
@@ -35,14 +40,11 @@ fun HomeScreen() {
                 modifier = Modifier.align(Alignment.Center)
             )
         } else {
-            val recommended = remember(books) { books.reversed() }
-            val newReleases = remember(books) { books.shuffled() }
-
             LazyColumn {
                 item { HeaderSection("Featured books & shelf's") }
-                item { BookRow(title = "Popular", books = books) }
-                item { BookRow(title = "Recommended", books = recommended) }
-                item { BookRow(title = "New Releases", books = newReleases) }
+                if (showPopularRow) {
+                    item { BookRow(title = "Popular", books = books) }
+                }
             }
         }
     }
