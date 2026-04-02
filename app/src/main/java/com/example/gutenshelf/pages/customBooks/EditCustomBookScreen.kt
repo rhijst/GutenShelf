@@ -1,5 +1,9 @@
 package com.example.gutenshelf.pages.customBooks
 
+import android.graphics.BitmapFactory
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -12,6 +16,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.gutenshelf.models.Author
@@ -47,75 +53,100 @@ fun EditCustomBookScreen(bookId: Int, viewModel: CustomBooksViewModel = viewMode
     var summariesText by remember { mutableStateOf(book.summaries.joinToString()) }
     var subjectsText by remember { mutableStateOf(book.subjects.joinToString()) }
     var languagesText by remember { mutableStateOf(book.languages.joinToString()) }
+    var coverBitmap by remember { mutableStateOf(book.localCover) }
 
-
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Edit Book") }
-            )
-        }
-    ) { padding ->
-
-        Column(
-            modifier = Modifier
-                .padding(padding)
-                .padding(16.dp)
-                .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-
-            OutlinedTextField(
-                value = title,
-                onValueChange = { title = it },
-                label = { Text("Title") }
-            )
-
-            OutlinedTextField(
-                value = authorsText,
-                onValueChange = { authorsText = it },
-                label = { Text("Authors (comma separated)") }
-            )
-
-            OutlinedTextField(
-                value = summariesText,
-                onValueChange = { summariesText = it },
-                label = { Text("Summaries") }
-            )
-
-            OutlinedTextField(
-                value = subjectsText,
-                onValueChange = { subjectsText = it },
-                label = { Text("Subjects") }
-            )
-
-            OutlinedTextField(
-                value = languagesText,
-                onValueChange = { languagesText = it },
-                label = { Text("Languages") }
-            )
-
-            Button(
-                onClick = {
-                    val authors = authorsText.split(",")
-                        .map { Author(it.trim()) }
-                        .filter { it.name.isNotBlank() }
-
-                    viewModel.updateBook(
-                        context = context,
-                        bookId = bookId,
-                        title = title,
-                        authors = authors,
-                        summaries = summariesText.split(",").map { it.trim() },
-                        subjects = subjectsText.split(",").map { it.trim() },
-                        languages = languagesText.split(",").map { it.trim() }
-                    )
-
-                    navigator.goBack()
-                }
-            ) {
-                Text("Save Changes")
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri ->
+        uri?.let {
+            context.contentResolver.openInputStream(it)?.use { stream ->
+                coverBitmap = BitmapFactory.decodeStream(stream)
             }
         }
     }
+
+    Scaffold(
+        topBar = { TopAppBar(title = { Text("Edit Book") }) },
+        content = { padding ->
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+                    .padding(16.dp)
+                    .verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+
+                // Show cover preview
+                coverBitmap?.let {
+                    Image(
+                        bitmap = it.asImageBitmap(),
+                        contentDescription = "Cover Preview",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(200.dp)
+                    )
+                }
+
+                Button(onClick = { launcher.launch("image/*") }) {
+                    Text("Change Cover Image")
+                }
+
+                OutlinedTextField(
+                    value = title,
+                    onValueChange = { title = it },
+                    label = { Text("Title") }
+                )
+
+                OutlinedTextField(
+                    value = authorsText,
+                    onValueChange = { authorsText = it },
+                    label = { Text("Authors (comma separated)") }
+                )
+
+                OutlinedTextField(
+                    value = summariesText,
+                    onValueChange = { summariesText = it },
+                    label = { Text("Summaries") }
+                )
+
+                OutlinedTextField(
+                    value = subjectsText,
+                    onValueChange = { subjectsText = it },
+                    label = { Text("Subjects") }
+                )
+
+                OutlinedTextField(
+                    value = languagesText,
+                    onValueChange = { languagesText = it },
+                    label = { Text("Languages") }
+                )
+
+                Button(
+                    onClick = {
+                        val authors = authorsText.split(",")
+                            .map { Author(it.trim()) }
+                            .filter { it.name.isNotBlank() }
+
+                        viewModel.updateBook(
+                            context = context,
+                            bookId = bookId,
+                            title = title,
+                            authors = authors,
+                            localCover = coverBitmap,
+                            summaries = summariesText.split(",").map { it.trim() },
+                            subjects = subjectsText.split(",").map { it.trim() },
+                            languages = languagesText.split(",").map { it.trim() }
+                        )
+
+                        navigator.goBack()
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Save Changes")
+                }
+            }
+        }
+    )
 }
