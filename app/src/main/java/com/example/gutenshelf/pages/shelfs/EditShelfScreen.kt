@@ -11,7 +11,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.gutenshelf.R
 import com.example.gutenshelf.models.ShelvesViewModel
-import com.example.gutenshelf.navigation.AppDestinations
 import com.example.gutenshelf.navigation.LocalNavigator
 
 @OptIn(ExperimentalMaterial3Api::class)

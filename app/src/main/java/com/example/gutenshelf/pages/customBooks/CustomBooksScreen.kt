@@ -4,16 +4,17 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.gutenshelf.composables.BookGrid
 import com.example.gutenshelf.composables.HeaderSection
 import com.example.gutenshelf.models.CustomBooksViewModel
+import com.example.gutenshelf.navigation.AppDestinations
 import com.example.gutenshelf.navigation.LocalNavigator
 
 @Composable
 fun CustomBooksScreen(viewModel: CustomBooksViewModel = viewModel()) {
+    val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
     val navigator = LocalNavigator.current
 
@@ -21,9 +22,17 @@ fun CustomBooksScreen(viewModel: CustomBooksViewModel = viewModel()) {
         viewModel.loadCustomBooks(context)
     }
 
+    LaunchedEffect(viewModel.message) {
+        viewModel.message?.let { msg ->
+            snackbarHostState.showSnackbar(msg)
+            viewModel.clearMessage()
+        }
+    }
+
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         floatingActionButton = {
-            FloatingActionButton(onClick = { navigator.navigate("add_custom_book") }) {
+            FloatingActionButton(onClick = { navigator.navigate(AppDestinations.ADD_CUSTOM_BOOK.route) }) {
                 Text("+")
             }
         },

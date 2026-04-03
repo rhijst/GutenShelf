@@ -76,7 +76,7 @@ fun AddCustomBookScreen(viewModel: CustomBooksViewModel = viewModel()) {
             languages = languages
         )
 
-        navigator.navigate(AppDestinations.CUSTOM_BOOKS.route)
+        navigator.goBack()
     }
 
     Scaffold(
@@ -84,7 +84,7 @@ fun AddCustomBookScreen(viewModel: CustomBooksViewModel = viewModel()) {
             TopAppBar(
                 title = { Text("Add Custom Book") },
                 navigationIcon = {
-                    IconButton(onClick = { navigator.navigate(AppDestinations.CUSTOM_BOOKS.route) }) {
+                    IconButton(onClick = { navigator.goBack() }) {
                         Icon(
                             painter = painterResource(id = R.drawable.back),
                             contentDescription = "Back",

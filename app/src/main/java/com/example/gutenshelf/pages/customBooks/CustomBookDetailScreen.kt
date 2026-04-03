@@ -30,6 +30,7 @@ fun CustomBookDetailScreen(
     bookId: Int,
     viewModel: CustomBooksViewModel = viewModel()
 ) {
+    val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
     val navigator = LocalNavigator.current
     var showDialog by remember { mutableStateOf(false) }
@@ -39,6 +40,13 @@ fun CustomBookDetailScreen(
 
     LaunchedEffect(Unit) {
         viewModel.loadCustomBooks(context)
+    }
+
+    LaunchedEffect(viewModel.message) {
+        viewModel.message?.let { msg ->
+            snackbarHostState.showSnackbar(msg)
+            viewModel.clearMessage()
+        }
     }
 
     val book = viewModel.customBooks.find { it.id == bookId }
@@ -51,6 +59,7 @@ fun CustomBookDetailScreen(
     }
 
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
                 title = { Text("Book Details") },

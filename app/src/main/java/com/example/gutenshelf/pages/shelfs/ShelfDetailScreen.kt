@@ -13,7 +13,6 @@ import com.example.gutenshelf.models.*
 import com.example.gutenshelf.pages.home.HomeViewModel
 import com.example.gutenshelf.network.BookRepository
 import com.example.gutenshelf.composables.BookGrid
-import com.example.gutenshelf.navigation.AppDestinations
 import com.example.gutenshelf.navigation.LocalNavigator
 import com.example.gutenshelf.R
 
