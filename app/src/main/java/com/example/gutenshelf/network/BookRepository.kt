@@ -16,15 +16,16 @@ import java.util.concurrent.Executors
 
 class BookRepository(private val context: Context) {
 
-    private val baseUrl = "https://gutendex.com/books/"
+//    http://10.0.2.2:8000/books
+    private val baseUrl = "https://gutendex.com/books"
     private val TAG = "BookRepository"
     private val executor = Executors.newSingleThreadExecutor()
 
     fun fetchBooks(onSuccess: (List<Book>) -> Unit, onError: (String) -> Unit) {
-        Log.d(TAG, "Fetching books from $baseUrl")
+        Log.d(TAG, "Fetching books from $baseUrl/")
         
         val request = object : JsonObjectRequest(
-            Request.Method.GET, baseUrl, null,
+            Request.Method.GET, "$baseUrl/", null,
             { response ->
                 // Perform heavy parsing on a background thread
                 executor.execute {
@@ -63,7 +64,7 @@ class BookRepository(private val context: Context) {
     }
 
     fun fetchBookById(id: Int, onSuccess: (Book) -> Unit, onError: (String) -> Unit) {
-        val url = "$baseUrl$id/"
+        val url = "$baseUrl/$id/"
         Log.d(TAG, "Fetching book from $url")
 
         val request = JsonObjectRequest(
@@ -100,7 +101,7 @@ class BookRepository(private val context: Context) {
     }
 
     fun fetchBooksBy(searchQuery: String, onSuccess: (List<Book>) -> Unit, onError: (String) -> Unit) {
-        val url = "https://gutendex.com/books?search=${searchQuery.replace(" ", "%20")}"
+        val url = "$baseUrl?search=${searchQuery.replace(" ", "%20")}"
 
         val request = object : JsonObjectRequest(
             Request.Method.GET, url, null,
