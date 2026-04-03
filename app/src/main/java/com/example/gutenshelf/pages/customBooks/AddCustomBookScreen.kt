@@ -55,6 +55,30 @@ fun AddCustomBookScreen(viewModel: CustomBooksViewModel = viewModel()) {
         viewModel.loadCustomBooks(context)
     }
 
+    val onAddBook = {
+        val authors = authorsInput.split(",")
+            .map { Author(it.trim()) }
+            .filter { it.name.isNotEmpty() }
+        val summaries = summariesInput.split(",")
+            .map { it.trim() }.filter { it.isNotEmpty() }
+        val subjects = subjectsInput.split(",")
+            .map { it.trim() }.filter { it.isNotEmpty() }
+        val languages = languagesInput.split(",")
+            .map { it.trim() }.filter { it.isNotEmpty() }
+
+        viewModel.addBook(
+            context = context,
+            title = title,
+            authors = authors,
+            localCover = coverBitmap,
+            summaries = summaries,
+            subjects = subjects,
+            languages = languages
+        )
+
+        navigator.navigate(AppDestinations.CUSTOM_BOOKS.route)
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -72,212 +96,132 @@ fun AddCustomBookScreen(viewModel: CustomBooksViewModel = viewModel()) {
         },
         content = { paddingValues ->
             if (isLandscape) {
-                // Landscape: split layout
-                Row(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues)
-                        .padding(16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    // Left: Cover
-                    Column(
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxHeight(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Top
-                    ) {
-                        coverBitmap?.let {
-                            Image(
-                                bitmap = it.asImageBitmap(),
-                                contentDescription = "Cover Preview",
-                                contentScale = ContentScale.Crop,
-                                modifier = Modifier
-                                    .fillMaxWidth( 0.4f )
-                                    .aspectRatio(0.67f)
-                            )
-                        }
-                    }
-
-                    // Right: scrollable Column
-                    Column(
-                        modifier = Modifier
-                            .weight(2f)
-                            .fillMaxHeight()
-                            .verticalScroll(rememberScrollState()),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        OutlinedTextField(
-                            value = title,
-                            onValueChange = { title = it },
-                            label = { Text("Book Title") },
-                            modifier = Modifier.fillMaxWidth()
-                        )
-
-                        OutlinedButton(
-                            onClick = { launcher.launch("image/*") },
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Text("Change Cover Image")
-                        }
-
-                        OutlinedTextField(
-                            value = authorsInput,
-                            onValueChange = { authorsInput = it },
-                            label = { Text("Authors (comma-separated)") },
-                            modifier = Modifier.fillMaxWidth()
-                        )
-
-                        OutlinedTextField(
-                            value = summariesInput,
-                            onValueChange = { summariesInput = it },
-                            label = { Text("Summaries (comma-separated)") },
-                            modifier = Modifier.fillMaxWidth()
-                        )
-
-                        OutlinedTextField(
-                            value = subjectsInput,
-                            onValueChange = { subjectsInput = it },
-                            label = { Text("Subjects (comma-separated)") },
-                            modifier = Modifier.fillMaxWidth()
-                        )
-
-                        OutlinedTextField(
-                            value = languagesInput,
-                            onValueChange = { languagesInput = it },
-                            label = { Text("Languages (comma-separated)") },
-                            modifier = Modifier.fillMaxWidth()
-                        )
-
-                        Button(
-                            onClick = {
-                                val authors = authorsInput.split(",")
-                                    .map { Author(it.trim()) }
-                                    .filter { it.name.isNotEmpty() }
-                                val summaries = summariesInput.split(",")
-                                    .map { it.trim() }.filter { it.isNotEmpty() }
-                                val subjects = subjectsInput.split(",")
-                                    .map { it.trim() }.filter { it.isNotEmpty() }
-                                val languages = languagesInput.split(",")
-                                    .map { it.trim() }.filter { it.isNotEmpty() }
-
-                                viewModel.addBook(
-                                    context = context,
-                                    title = title,
-                                    authors = authors,
-                                    localCover = coverBitmap,
-                                    summaries = summaries,
-                                    subjects = subjects,
-                                    languages = languages
-                                )
-
-                                navigator.navigate(AppDestinations.CUSTOM_BOOKS.route)
-                            },
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Text("Add Book")
-                        }
-                    }
-                }
+                AddCustomBookScreenLandscape(
+                    paddingValues = paddingValues,
+                    title = title,
+                    onTitleChange = { title = it },
+                    authorsInput = authorsInput,
+                    onAuthorsInputChange = { authorsInput = it },
+                    summariesInput = summariesInput,
+                    onSummariesInputChange = { summariesInput = it },
+                    subjectsInput = subjectsInput,
+                    onSubjectsInputChange = { subjectsInput = it },
+                    languagesInput = languagesInput,
+                    onLanguagesInputChange = { languagesInput = it },
+                    coverBitmap = coverBitmap,
+                    onPickImage = { launcher.launch("image/*") },
+                    onAddBook = onAddBook
+                )
             } else {
-                // Portrait: scrollable Column
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues)
-                        .verticalScroll(rememberScrollState())
-                        .padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    OutlinedTextField(
-                        value = title,
-                        onValueChange = { title = it },
-                        label = { Text("Book Title") },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    OutlinedTextField(
-                        value = authorsInput,
-                        onValueChange = { authorsInput = it },
-                        label = { Text("Authors (comma-separated)") },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    OutlinedTextField(
-                        value = summariesInput,
-                        onValueChange = { summariesInput = it },
-                        label = { Text("Summaries (comma-separated)") },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    OutlinedTextField(
-                        value = subjectsInput,
-                        onValueChange = { subjectsInput = it },
-                        label = { Text("Subjects (comma-separated)") },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    OutlinedTextField(
-                        value = languagesInput,
-                        onValueChange = { languagesInput = it },
-                        label = { Text("Languages (comma-separated)") },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    Box(
-                        modifier = Modifier.fillMaxWidth(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        coverBitmap?.let {
-                            Image(
-                                bitmap = it.asImageBitmap(),
-                                contentDescription = "Cover Preview",
-                                contentScale = ContentScale.Crop,
-                                modifier = Modifier
-                                    .fillMaxWidth(0.4f)
-                                    .aspectRatio(0.67f)
-                            )
-                        }
-                    }
-
-                    Button(
-                        onClick = { launcher.launch("image/*") },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text("Pick Cover Image")
-                    }
-
-                    Button(
-                        onClick = {
-                            val authors = authorsInput.split(",")
-                                .map { Author(it.trim()) }
-                                .filter { it.name.isNotEmpty() }
-                            val summaries = summariesInput.split(",")
-                                .map { it.trim() }.filter { it.isNotEmpty() }
-                            val subjects = subjectsInput.split(",")
-                                .map { it.trim() }.filter { it.isNotEmpty() }
-                            val languages = languagesInput.split(",")
-                                .map { it.trim() }.filter { it.isNotEmpty() }
-
-                            viewModel.addBook(
-                                context = context,
-                                title = title,
-                                authors = authors,
-                                localCover = coverBitmap,
-                                summaries = summaries,
-                                subjects = subjects,
-                                languages = languages
-                            )
-
-                            navigator.navigate(AppDestinations.CUSTOM_BOOKS.route)
-                        },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text("Add Book")
-                    }
-                }
+                AddCustomBookPortrait(
+                    paddingValues = paddingValues,
+                    title = title,
+                    onTitleChange = { title = it },
+                    authorsInput = authorsInput,
+                    onAuthorsInputChange = { authorsInput = it },
+                    summariesInput = summariesInput,
+                    onSummariesInputChange = { summariesInput = it },
+                    subjectsInput = subjectsInput,
+                    onSubjectsInputChange = { subjectsInput = it },
+                    languagesInput = languagesInput,
+                    onLanguagesInputChange = { languagesInput = it },
+                    coverBitmap = coverBitmap,
+                    onPickImage = { launcher.launch("image/*") },
+                    onAddBook = onAddBook
+                )
             }
         }
     )
+}
+
+@Composable
+fun AddCustomBookPortrait(
+    paddingValues: PaddingValues,
+    title: String,
+    onTitleChange: (String) -> Unit,
+    authorsInput: String,
+    onAuthorsInputChange: (String) -> Unit,
+    summariesInput: String,
+    onSummariesInputChange: (String) -> Unit,
+    subjectsInput: String,
+    onSubjectsInputChange: (String) -> Unit,
+    languagesInput: String,
+    onLanguagesInputChange: (String) -> Unit,
+    coverBitmap: Bitmap?,
+    onPickImage: () -> Unit,
+    onAddBook: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(paddingValues)
+            .verticalScroll(rememberScrollState())
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        OutlinedTextField(
+            value = title,
+            onValueChange = onTitleChange,
+            label = { Text("Book Title") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        OutlinedTextField(
+            value = authorsInput,
+            onValueChange = onAuthorsInputChange,
+            label = { Text("Authors (comma-separated)") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        OutlinedTextField(
+            value = summariesInput,
+            onValueChange = onSummariesInputChange,
+            label = { Text("Summaries (comma-separated)") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        OutlinedTextField(
+            value = subjectsInput,
+            onValueChange = onSubjectsInputChange,
+            label = { Text("Subjects (comma-separated)") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        OutlinedTextField(
+            value = languagesInput,
+            onValueChange = onLanguagesInputChange,
+            label = { Text("Languages (comma-separated)") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.Center
+        ) {
+            coverBitmap?.let {
+                Image(
+                    bitmap = it.asImageBitmap(),
+                    contentDescription = "Cover Preview",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxWidth(0.4f)
+                        .aspectRatio(0.67f)
+                )
+            }
+        }
+
+        Button(
+            onClick = onPickImage,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Pick Cover Image")
+        }
+
+        Button(
+            onClick = onAddBook,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Add Book")
+        }
+    }
 }
