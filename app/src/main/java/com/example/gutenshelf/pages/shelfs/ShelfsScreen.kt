@@ -8,6 +8,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -61,15 +62,19 @@ fun ShelfsScreen(viewModel: ShelvesViewModel = viewModel()) {
                     ) {
                         Text(
                             text = shelf.name,
-                            style = MaterialTheme.typography.titleLarge
+                            style = MaterialTheme.typography.titleLarge,
+                            modifier = Modifier.weight(1f)
                         )
 
                         IconButton(
-                            onClick = { navigator.goToEditShelf(shelf.id) }
+                            onClick = { viewModel.togglePin(context, shelf.id) }
                         ) {
                             Icon(
-                                painter = painterResource(id = R.drawable.pencil),
-                                contentDescription = "Edit",
+                                painter = painterResource(
+                                    id = if (shelf.isPinned) R.drawable.thumbtackfill else R.drawable.pinned_empty
+                                ),
+                                contentDescription = "Pin",
+                                tint = if (shelf.isPinned) MaterialTheme.colorScheme.primary else Color.Gray,
                                 modifier = Modifier.size(20.dp)
                             )
                         }

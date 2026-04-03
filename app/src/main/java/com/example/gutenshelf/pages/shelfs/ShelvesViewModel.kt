@@ -40,13 +40,13 @@ class ShelvesViewModel : ViewModel() {
         }
 
         viewModelScope.launch(Dispatchers.IO) {
-            val newShelves = shelves.toMutableList()
-            val newId = (newShelves.maxOfOrNull { it.id } ?: 0) + 1
+            val currentShelves = ShelfDiskCache.load(context).toMutableList()
+            val newId = (currentShelves.maxOfOrNull { it.id } ?: 0) + 1
             val newShelf = Shelf(id = newId, name = name)
-            newShelves.add(newShelf)
-            ShelfDiskCache.save(context, newShelves)
+            currentShelves.add(newShelf)
+            ShelfDiskCache.save(context, currentShelves)
             withContext(Dispatchers.Main) {
-                shelves = newShelves
+                shelves = currentShelves
                 message = "Shelf added successfully"
             }
         }
@@ -59,14 +59,29 @@ class ShelvesViewModel : ViewModel() {
         }
 
         viewModelScope.launch(Dispatchers.IO) {
-            val newShelves = shelves.toMutableList()
-            val index = newShelves.indexOfFirst { it.id == shelfId }
+            val currentShelves = ShelfDiskCache.load(context).toMutableList()
+            val index = currentShelves.indexOfFirst { it.id == shelfId }
             if (index != -1) {
-                newShelves[index] = newShelves[index].copy(name = name)
-                ShelfDiskCache.save(context, newShelves)
+                currentShelves[index] = currentShelves[index].copy(name = name)
+                ShelfDiskCache.save(context, currentShelves)
                 withContext(Dispatchers.Main) {
-                    shelves = newShelves
+                    shelves = currentShelves
                     message = "Shelf updated successfully"
+                }
+            }
+        }
+    }
+
+    fun togglePin(context: Context, shelfId: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val currentShelves = ShelfDiskCache.load(context).toMutableList()
+            val index = currentShelves.indexOfFirst { it.id == shelfId }
+            if (index != -1) {
+                val shelf = currentShelves[index]
+                currentShelves[index] = shelf.copy(isPinned = !shelf.isPinned)
+                ShelfDiskCache.save(context, currentShelves)
+                withContext(Dispatchers.Main) {
+                    shelves = currentShelves
                 }
             }
         }
@@ -74,11 +89,11 @@ class ShelvesViewModel : ViewModel() {
 
     fun removeShelf(context: Context, shelfId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            val newShelves = shelves.toMutableList()
-            newShelves.removeAll { it.id == shelfId }
-            ShelfDiskCache.save(context, newShelves)
+            val currentShelves = ShelfDiskCache.load(context).toMutableList()
+            currentShelves.removeAll { it.id == shelfId }
+            ShelfDiskCache.save(context, currentShelves)
             withContext(Dispatchers.Main) {
-                shelves = newShelves
+                shelves = currentShelves
                 message = "Shelf removed successfully"
             }
         }
