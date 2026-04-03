@@ -23,8 +23,6 @@ class ShelvesViewModel : ViewModel() {
         private set
 
     fun loadShelves(context: Context) {
-        if (shelves.isNotEmpty()) return
-
         isLoading = true
         viewModelScope.launch(Dispatchers.IO) {
             val loaded = ShelfDiskCache.load(context)

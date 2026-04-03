@@ -9,6 +9,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
+import androidx.compose.material3.IconButton
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,6 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.android.volley.toolbox.ImageRequest
 import com.example.gutenshelf.R
+import com.example.gutenshelf.composables.AddBookToShelfDialog
 import com.example.gutenshelf.models.Book
 import com.example.gutenshelf.navigation.LocalNavigator
 import com.example.gutenshelf.network.BookRepository
@@ -37,6 +39,7 @@ fun BookDetailScreen(bookId: Int) {
     var isLoading by remember { mutableStateOf(true) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
     var bitmap by remember { mutableStateOf<Bitmap?>(null) }
+    var showAddToShelfDialog by remember { mutableStateOf(false) }
 
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
@@ -76,6 +79,15 @@ fun BookDetailScreen(bookId: Int) {
                             painter = painterResource(id = R.drawable.back),
                             contentDescription = "Back",
                             modifier = Modifier.size(20.dp)
+                        )
+                    }
+                },
+                actions = {
+                    IconButton(onClick = { showAddToShelfDialog = true }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.books),
+                            modifier = Modifier.size(24.dp),
+                            contentDescription = "Add to Shelf"
                         )
                     }
                 }
@@ -192,6 +204,14 @@ fun BookDetailScreen(bookId: Int) {
                             )
                         }
                     }
+                }
+                if (showAddToShelfDialog) {
+                    AddBookToShelfDialog(
+                        bookId = book!!.id,
+                        bookType = book!!.type,
+                        onDismiss = { showAddToShelfDialog = false },
+                        onConfirm = { showAddToShelfDialog = false }
+                    )
                 }
             }
         }

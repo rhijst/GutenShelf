@@ -23,6 +23,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.gutenshelf.models.CustomBooksViewModel
 import com.example.gutenshelf.navigation.LocalNavigator
 import com.example.gutenshelf.R
+import com.example.gutenshelf.cache.ShelfDiskCache
+import com.example.gutenshelf.composables.AddBookToShelfDialog
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -33,7 +35,8 @@ fun CustomBookDetailScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
     val navigator = LocalNavigator.current
-    var showDialog by remember { mutableStateOf(false) }
+    var showDeleteDialog by remember { mutableStateOf(false) }
+    var showAddToShelfDialog by remember { mutableStateOf(false) }
 
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
@@ -84,12 +87,20 @@ fun CustomBookDetailScreen(
                     }
 
                     IconButton(onClick = {
-                        showDialog = true
+                        showDeleteDialog = true
                     }) {
                         Icon(
                             painter = painterResource(id = R.drawable.trash),
                             modifier = Modifier.size(24.dp),
                             contentDescription = "Delete"
+                        )
+                    }
+
+                    IconButton(onClick = { showAddToShelfDialog = true }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.books),
+                            modifier = Modifier.size(24.dp),
+                            contentDescription = "Add to Shelf"
                         )
                     }
                 }
@@ -200,25 +211,34 @@ fun CustomBookDetailScreen(
         }
     }
 
-    if (showDialog) {
+    if (showDeleteDialog) {
         AlertDialog(
-            onDismissRequest = { showDialog = false },
+            onDismissRequest = { showDeleteDialog = false },
             title = { Text("Delete Book") },
             text = { Text("Are you sure you want to delete this book?") },
             confirmButton = {
                 TextButton(onClick = {
                     viewModel.removeBook(context, bookId)
-                    showDialog = false
+                    showDeleteDialog = false
                     navigator.goBack()
                 }) {
                     Text("Delete")
                 }
             },
             dismissButton = {
-                TextButton(onClick = { showDialog = false }) {
+                TextButton(onClick = { showDeleteDialog = false }) {
                     Text("Cancel")
                 }
             }
+        )
+    }
+
+    if (showAddToShelfDialog) {
+        AddBookToShelfDialog(
+            bookId = book.id,
+            bookType = book.type,
+            onDismiss = { showAddToShelfDialog = false },
+            onConfirm = { showAddToShelfDialog = false }
         )
     }
 }
