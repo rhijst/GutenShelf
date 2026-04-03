@@ -86,6 +86,19 @@ class ShelvesViewModel : ViewModel() {
         }
     }
 
+    fun resolveBooks(
+        references: List<BookReference>,
+        apiBooks: List<Book>,
+        customBooks: List<Book>
+    ): List<Book> {
+        return references.mapNotNull { ref ->
+            when (ref.bookType) {
+                BookType.API -> apiBooks.find { it.id == ref.bookId }
+                BookType.CUSTOM -> customBooks.find { it.id == ref.bookId }
+            }
+        }
+    }
+
     fun clearMessage() {
         message = null
     }

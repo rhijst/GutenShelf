@@ -12,9 +12,11 @@ interface Navigator {
     fun goToAuthorBooks(authorName: String)
 
     fun goToShelfDetail(shelfId: Int)
+    fun goToEditShelf(shelfId: Int)
 
     fun goBack()
     fun navigate(route: String)
+    fun navigateRoot(route: String)
 }
 
 class NavigatorImpl(
@@ -38,9 +40,11 @@ class NavigatorImpl(
         navController.navigate("author_books/$encoded")
     }
 
-
     override fun goToShelfDetail(shelfId: Int){
         navController.navigate("shelf_detail/$shelfId")
+    }
+    override fun goToEditShelf(shelfId: Int) {
+        navController.navigate("shelf_edit/$shelfId")
     }
 
     override fun goBack() {
@@ -48,6 +52,10 @@ class NavigatorImpl(
     }
 
     override fun navigate(route: String) {
+        navController.navigate(route)
+    }
+
+    override fun navigateRoot(route: String) {
         navController.navigate(route) {
             popUpTo(navController.graph.startDestinationId) {
                 inclusive = false
@@ -55,4 +63,5 @@ class NavigatorImpl(
             launchSingleTop = true
         }
     }
+
 }

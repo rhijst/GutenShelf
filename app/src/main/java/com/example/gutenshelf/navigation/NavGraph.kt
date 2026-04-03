@@ -28,6 +28,8 @@ import com.example.gutenshelf.pages.customBooks.AddCustomBookScreen
 import com.example.gutenshelf.pages.customBooks.CustomBookDetailScreen
 import com.example.gutenshelf.pages.customBooks.EditCustomBookScreen
 import com.example.gutenshelf.pages.shelfs.AddShelfScreen
+import com.example.gutenshelf.pages.shelfs.EditShelfScreen
+import com.example.gutenshelf.pages.shelfs.ShelfDetailScreen
 
 @Composable
 fun AppNavGraph(navController: NavHostController) {
@@ -102,14 +104,4 @@ fun AppNavGraph(navController: NavHostController) {
             }
         }
     }
-}
-
-@Composable
-fun ShelfDetailScreen(x0: Int, x1: ShelvesViewModel) {
-    TODO("Not yet implemented")
-}
-
-@Composable
-fun EditShelfScreen(x0: Int, x1: ShelvesViewModel) {
-    TODO("Not yet implemented")
 }

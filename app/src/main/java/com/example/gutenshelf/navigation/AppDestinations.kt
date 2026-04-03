@@ -8,7 +8,7 @@ enum class AppDestinations(val route: String, ) {
     // Shelfs
     SHELFS("shelfs"),
     ADD_SHELF("add_shelf"),
-    EDIT_SHELF("edit_shelf/{shelfId}"),
+    EDIT_SHELF("shelf_edit/{shelfId}"),
     SHELF_DETAIL("shelf_detail/{shelfId}"),
 
     // Books
